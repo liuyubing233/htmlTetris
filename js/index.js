@@ -9,25 +9,26 @@
   const cubeMoveBox = document.createElement('div')
   cubeMoveBox.className = 'cube-move-box'
 
-  // 竖向分割线
+  // 竖向分割线的数量
   const verticalNum = 12
-  const lineGap = conWidth / (verticalNum + 1)
+  // 一个方块的宽高
+  const oneBoxWidth = conWidth / (verticalNum + 1)
   for (var i = 0; i < verticalNum; i++) {
     const vertical = document.createElement('div')
     vertical.className = 'vertical'
-    vertical.style = `top: 0; left: ${lineGap * (i + 1)}px`
+    vertical.style = `top: 0; left: ${oneBoxWidth * (i + 1)}px`
     cubeMoveBox.appendChild(vertical)
   }
 
-  // 横向分割线
-  const horizontalNum = (conHeight / lineGap) - 1
+  // 横向分割线的数量
+  const horizontalNum = (conHeight / oneBoxWidth) - 1
   for (var i = 0; i < horizontalNum; i++) {
     const vertical = document.createElement('div')
     vertical.className = 'horizontal'
-    vertical.style = `top: ${lineGap * (i + 1)}px; left: 0px`
+    vertical.style = `top: ${oneBoxWidth * (i + 1)}px; left: 0px`
     cubeMoveBox.appendChild(vertical)
   }
-  console.log(conHeight / lineGap)
+  console.log(conHeight / oneBoxWidth)
 
 
   tetrisContent.appendChild(cubeMoveBox)
