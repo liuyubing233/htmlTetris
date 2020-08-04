@@ -1,58 +1,433 @@
 (function () {
+  const cubeBox = document.querySelector('.cube-box-content') // 方块盒子
+  const cubeBoxParent = document.querySelector('.cube-box-parent')
+  // cube-box-parent
+  const _conWidth = 300
+  const _conHeight = _conWidth * 2
+  cubeBoxParent.style = `width: ${_conWidth}px; height: ${_conHeight}px;`
 
-  const indexBox = document.querySelector('.index-box')
-  const tetrisContent = document.querySelector('.tetris-content')
-  const conWidth = 300
-  const conHeight = conWidth * 2
-  tetrisContent.style = `width: ${conWidth}px; height: ${conHeight}px`
+  const _columns = 10 // 列数
+  const _rows = _columns * 2 + 1 // 行数
+  const _cubeWidth = _conWidth / _columns // 方块边长
+  cubeBox.style = `width: ${_conWidth}px; height: ${_conHeight}px;position: absolute;left: 0;top: -${_cubeWidth}px;`
 
-  const cubeMoveBox = document.createElement('div')
-  cubeMoveBox.className = 'cube-move-box'
+  let cubeArray = new Array() // 方块数组
+  let thisCube = undefined // 当前实心方块
+  let nextCubeType = undefined
+  let moveTime = 400 // 下落速度（moveTime ms 下落一次）
+  let interval = undefined
+  let keyCanOperate = true // 键盘是否可以操作
 
-  // 竖向分割线的数量
-  const verticalNum = 12
-  // 一个方块的宽高
-  const oneBoxWidth = conWidth / (verticalNum + 1)
-  for (var i = 0; i < verticalNum; i++) {
-    const vertical = document.createElement('div')
-    vertical.className = 'vertical'
-    vertical.style = `top: 0; left: ${oneBoxWidth * (i + 1)}px`
-    cubeMoveBox.appendChild(vertical)
+  // 方块种类OBJ
+  const CUBE_TYPE = {
+    0: CUBE_I,
+    1: CUBE_T,
+    2: CUBE_Z,
+    3: CUBE_Z_MIRROR,
+    4: CUBE_O,
+    5: CUBE_L,
+    6: CUBE_L_MIRROR,
   }
 
-  // 横向分割线的数量
-  const horizontalNum = (conHeight / oneBoxWidth) - 1
-  for (var i = 0; i < horizontalNum; i++) {
-    const vertical = document.createElement('div')
-    vertical.className = 'horizontal'
-    vertical.style = `top: ${oneBoxWidth * (i + 1)}px; left: 0px`
-    cubeMoveBox.appendChild(vertical)
+  // 按键方式OBJ
+  const KEY_CODE_TYPE = {
+    37: () => KEY_CODE_MOVE(-1), // 键盘左键
+    39: () => KEY_CODE_MOVE(1), // 键盘右键
+    40: () => KEY_CODE_DOWN(), // 键盘下键
+    38: () => KEY_CODE_ROTATE(-1), // 键盘上键(暂时只让逆时针旋转)
   }
-  console.log(conHeight / oneBoxWidth)
 
+  // 空心方块
+  const CUBE_HOLLOW = (className) => {
+    return `<div style="width: ${_cubeWidth}px;height: ${_cubeWidth}px;border: 1px solid #000;float: left;" class="cube-hollow ${className || ''}"></div>`
+  }
 
-  tetrisContent.appendChild(cubeMoveBox)
+  // 实心方块
+  const CUBE_SOLID = (className) => {
+    return `<div style="width: ${_cubeWidth}px;height: ${_cubeWidth}px;border: 1px solid #000;float: left;background: #000" class="cube-solid ${className || ''}"></div>`
+  }
 
-  // const allVertical = document.querySelectorAll('.vertical')
-  // console.log(allVertical)
-  // allVertical.forEach((div, index) => {
-  //   div.style = `top: 0; left: ${(conWidth / 13) * (index + 1)}px`
-  // })
+  // 点击开始按钮
+  document.querySelector('#button-start').onclick = () => {
+    keyCanOperate = true
+    produceCube()
+    interval = window.setInterval(() => {
+      cubeDrop()
+    }, moveTime)
+  }
 
+  // 键盘按键按下
+  document.onkeydown = ({ keyCode }) => {
+    if (keyCanOperate && KEY_CODE_TYPE.hasOwnProperty(keyCode)) {
+      KEY_CODE_TYPE[keyCode].call(this)
+      printCube()
+    }
+  }
 
+  // 键盘案件抬起
+  document.onkeyup = (e) => {
+    // console.log('keyup', e)
+  }
 
+  // 键盘操作 方块横移 左-1 右1
+  function KEY_CODE_MOVE(moveX) {
+    !isBump(moveX, 0) && move(moveX)
+    printCube()
+  }
 
+  // 方块横移
+  function move(moveX) {
+    for (let i = 0; i < thisCube.x.length; i++) {
+      thisCube.x[i] += moveX
+    }
+  }
 
+  // 键盘操作 方块下到底部
+  function KEY_CODE_DOWN() {
+    while (drop()) { }
+    cubeFixed()
+  }
 
-  // const cubeI = document.createElement('div')
-  function cubeI() {
-    const cube = document.createElement('div')
+  // 键盘操作 方块旋转 顺时针1 逆时针-1
+  function KEY_CODE_ROTATE(r) {
+    if (thisCube.center === -1) {
+      // 中心点是-1时不能旋转
+      return
+    }
+    rotate(r)
+    // 如果旋转后发生碰撞则转回去
+    isBump(0, 0) && rotate(-r)
+    printCube()
+  }
 
+  // 方块旋转
+  function rotate(r) {
+    // 根据中心点选取中心
+    const rX = thisCube.x[thisCube.center]
+    const rY = thisCube.y[thisCube.center]
+    for (let i = 0; i < thisCube.x.length; i++) {
+      // 旋转前的方块位置
+      const nX = thisCube.x[i]
+      const nY = thisCube.y[i]
+      console.log('r', r)
 
+      if (r) {
+        // 顺时针 计算四元方程组
+        thisCube.x[i] = rX + rY - nY
+        thisCube.y[i] = nX + rY - rX
+      } else {
+        // 逆时针
+        thisCube.x[i] = nY + rX - rY
+        thisCube.y[i] = rX + rY - nX
+      }
+    }
+  }
+
+  // 初始化
+  function init() {
+    initCubeArray()
+    getNextCubeType()
+    printCube()
+  }
+  init()
+
+  // 方块绘制
+  function printCube() {
+    let strCubes = ''
+    // 循环行数
+    for (let i = 0; i < _rows; i++) {
+      // 循环每行几列
+      for (let j = 0; j < _columns; j++) {
+        let k = 0
+        if (thisCube !== undefined) {
+          for (k = 0; k < thisCube.x.length; k++) {
+            // 如果当前行等于生成方块的y
+            // 如果当前列等于生成方块的x
+            if (i === thisCube.y[k] && j === thisCube.x[k]) {
+              // 跳出循环
+              break
+            }
+          }
+        }
+        // 如果循环的k不等于x的长度
+        // console.log(k)
+        if (thisCube !== undefined && k !== thisCube.x.length) {
+          // 渲染实心方块
+          strCubes += CUBE_SOLID(thisCube.className)
+        } else {
+          // 按照现有方块渲染
+          strCubes += cubeArray[i][j]
+        }
+      }
+    }
+    cubeBox.innerHTML = strCubes
+  }
+
+  // 显示下一个方块
+  function printNextCube() {
+    console.log('next cube show box')
+  }
+
+  // 初始化方块数组（全部为空心块）
+  function initCubeArray() {
+    for (let i = 0; i < _rows; i++) {
+      cubeArray[i] = new Array()
+      for (let j = 0; j < _columns; j++) {
+        cubeArray[i][j] = CUBE_HOLLOW() // 空心快
+      }
+    }
+    // console.log(cubeArray)
+  }
+
+  // 获取方块种类
+  function getCubeByType(type) {
+    const cube = new Object()
+    cube.x = new Array() // 每个方块横向（x）位置
+    cube.y = new Array() // 每个方块纵向（y）位置
+    return CUBE_TYPE[type].call(this, cube)
+  }
+
+  // 在指定位置画方块
+  function drawChat(x, y, s) {
+    cubeArray[y][x] = s
+  }
+
+  // 删除指定位置方块 将指定位置方块替换为空心块
+  function removeChat(x, y) {
+    cubeArray[y][x] = CUBE_HOLLOW()
+  }
+
+  // 获取指定位置方块
+  function getChat(x, y) {
+    return cubeArray[y][x]
+  }
+
+  // 判断指定位置方块是否是实心方块
+  function chatIsSolid(x, y) {
+    if (cubeArray[y] && cubeArray[y][x]) {
+      return cubeArray[y][x].includes('cube-solid')
+    } else {
+      return true
+    }
+  }
+
+  // 是否有碰撞 dx dy为偏移量 即移动的距离
+  function isBump(dx, dy) {
+    for (let i = 0; i < thisCube.x.length; i++) {
+      // 下一步运动左右超出
+      // 下一步运动超出高度
+      // 下一步运动存在实心方块
+      if (thisCube.x[i] + dx < 0 || thisCube.x[i] + dx > _columns || thisCube.y[i] + dy >= _rows || chatIsSolid(thisCube.x[i] + dx, thisCube.y[i] + dy)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  // 方块下落
+  function cubeDrop() {
+    isBump(0, 1) && cubeFixed()
+    drop()
+  }
+
+  // 方块下落运动
+  function drop() {
+    if (isBump(0, 1)) {
+      return false
+    }
+    for (let i = 0; i < thisCube.x.length; i++) {
+      thisCube.y[i]++
+    }
+    printCube()
+    return true
+  }
+
+  // 方块固定
+  function cubeFixed() {
+    for (let i = 0; i < thisCube.x.length; i++) {
+      // 如果方块移动距离小于0 则游戏结束
+      if (thisCube.y[i] < 0) {
+        gameOver()
+        return
+      }
+      drawChat(thisCube.x[i], thisCube.y[i], CUBE_SOLID(thisCube.className))
+    }
+    produceCube()
+    eliminateLine()
+  }
+
+  // 检测一行是否全部是实心方块
+  function eliminateLine() {
+    for (let i = 0; i < cubeArray.length; i++) {
+      let solidNum = 0
+      for (let j = 0; j < cubeArray[i].length; j++) {
+        chatIsSolid(j, i) && (solidNum += 1)
+      }
+      solidNum === cubeArray[i].length && removeLine(i)
+    }
+  }
+
+  // 删除一行 y为行坐标
+  function removeLine(y) {
+    // 截取掉删除的行
+    cubeArray.splice(y, 1)
+    const colArr = new Array()
+    for (let j = 0; j < _columns; j++) {
+      colArr[j] = CUBE_HOLLOW() // 空心快
+    }
+    // 在前面插入空白方块
+    cubeArray.unshift(colArr)
+  }
+
+  // 产生方块
+  function produceCube() {
+    thisCube = getCubeByType(nextCubeType)
+    // console.log(nextCubeType)
+    getNextCubeType()
+    printNextCube()
+  }
+
+  // 随机获取下一次方块种类
+  function getNextCubeType() {
+    const randomType = Math.round(Math.random() * 6)
+    if (nextCubeType !== randomType) {
+      nextCubeType = randomType
+    } else {
+      getNextCubeType()
+      return
+    }
+  }
+
+  // 游戏结束
+  function gameOver() {
+    console.log('game over')
+    window.clearInterval(interval)
+    keyCanOperate = false
+  }
+
+  // 以下为方块种类
+  /**
+   * I型
+   * ■■■■
+   */
+  function CUBE_I(cube) {
+    for (let i = 0; i <= 3; i++) {
+      cube.x[i] = _columns / 2 + i - 2
+      cube.y[i] = 0
+    }
+    cube.center = 1 // 方块的旋转中心
+    cube.className = 'cube-I'
     return cube
   }
 
+  /**
+   * T型
+   *  ■
+   * ■■■
+   */
+  function CUBE_T(cube) {
+    for (let i = 0; i < 3; i++) {
+      cube.x[i] = _columns / 2 - 1 + i
+      cube.y[i] = 0
+    }
+    cube.x[3] = _columns / 2 // T型顶部x位置
+    cube.y[3] = -1 // T型顶部y位置
+    cube.center = 1 // 方块的旋转中心
+    cube.className = 'cube-T'
+    return cube
+  }
 
+  /**
+   * Z型
+   * ■■
+   *  ■■
+   */
+  function CUBE_Z(cube) {
+    for (let i = 0; i <= 3; i++) {
+      if (i < 2) {
+        cube.x[i] = _columns / 2 + i
+        cube.y[i] = 0
+      } else {
+        cube.x[i] = _columns / 2 + i - 3
+        cube.y[i] = -1
+      }
+    }
+    cube.center = 0 // 方块的旋转中心
+    cube.className = 'cube-Z'
+    return cube
+  }
 
+  /**
+   * 镜像Z型
+   *  ■■
+   * ■■
+   */
+  function CUBE_Z_MIRROR(cube) {
+    for (let i = 0; i <= 3; i++) {
+      if (i < 2) {
+        cube.x[i] = _columns / 2 + i - 1
+        cube.y[i] = 0
+      } else {
+        cube.x[i] = _columns / 2 + i - 2
+        cube.y[i] = -1
+      }
+    }
+    cube.center = 1 // 方块的旋转中心
+    cube.className = 'cube-Z'
+    return cube
+  }
 
+  /**
+   * O型
+   * ■■
+   * ■■
+   */
+  function CUBE_O(cube) {
+    for (let i = 0; i <= 3; i++) {
+      if (i < 2) {
+        cube.x[i] = _columns / 2 + i - 1
+        cube.y[i] = 0
+      } else {
+        cube.x[i] = _columns / 2 + i - 3
+        cube.y[i] = -1
+      }
+    }
+    cube.center = -1 // 0型不能旋转
+    cube.className = 'cube-O'
+    return cube
+  }
+
+  /**
+   * L型
+   *   ■
+   * ■■■
+   */
+  function CUBE_L(cube) {
+    for (let i = 0; i < 3; i++) {
+      cube.x[i] = _columns / 2 + i - 1
+      cube.y[i] = 0
+    }
+    cube.x[3] = _columns / 2 + 1
+    cube.y[3] = -1
+    cube.center = 1 // 方块的旋转中心
+    cube.className = 'cube-L'
+    return cube
+  }
+
+  /**
+   * 镜像L型
+   * ■
+   * ■■■
+   */
+  function CUBE_L_MIRROR(cube) {
+    for (let i = 0; i < 3; i++) {
+      cube.x[i] = _columns / 2 + i - 1
+      cube.y[i] = 0
+    }
+    cube.x[3] = _columns / 2 - 1
+    cube.y[3] = -1
+    cube.center = 1 // 方块的旋转中心
+    cube.className = 'cube-L-mirror'
+    return cube
+  }
 })()
