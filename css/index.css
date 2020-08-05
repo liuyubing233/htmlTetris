@@ -62,4 +62,33 @@ body {
 
 .game-buttons {
   height: 20%;
+  display: flex;
+  justify-content: center;
+}
+
+.button-center {
+  /* height: calc(100% - 24px); */
+  /* margin: 12px; */
+  height: 100%;
+  text-align: center;
+}
+
+#button-top,
+#button-left,
+#button-right,
+#button-down,
+#button-space {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  /* background: transparent; */
+}
+
+.button-have-space-div {
+  display: flex;
+}
+
+.button-left,
+.button-right {
+  flex: 1;
 }

@@ -9,6 +9,8 @@
   const NodeFractionNow = document.querySelector('.now-fraction') // 当前得分
   const NodeFractionMax = document.querySelector('.max-fraction') // 最高得分
   const NodeLevel = document.querySelector('.level-span') // 等级
+  const NodeButtonCenter = document.querySelector('.button-center') // 操作按钮盒子
+
   // 如果视窗高度大于宽度则将内容（NodeIndexBox）扩展到100%
   NodeIndexBox.style = WindowHeight > WindowWidth
     ? `height: 100%; width: 100%;`
@@ -83,6 +85,10 @@
   // 实心方块
   const CUBE_SOLID = (w, className) => {
     return `<div style="width: ${w}px;height: ${w}px;border: 1px solid #000;float: left;background: #000" class="cube-solid ${className || ''}"></div>`
+  }
+
+  NodeButtonCenter.onclick = (e) => {
+    console.log(e.target.id)
   }
 
   // 点击开始按钮
