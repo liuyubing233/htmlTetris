@@ -6,6 +6,9 @@
   const NodeCubeBox = document.querySelector('.cube-box') // 方块盒子渲染区域
   const NodeNextCubeBox = document.querySelector('.the-next-cube') // 下一个方块的显示盒子
   const NodeButtonStart = document.querySelector('#button-start') // 开始按钮
+  const NodeFractionNow = document.querySelector('.now-fraction') // 当前得分
+  const NodeFractionMax = document.querySelector('.max-fraction') // 最高得分
+  const NodeLevel = document.querySelector('.level-span') // 等级
   // 如果视窗高度大于宽度则将内容（NodeIndexBox）扩展到100%
   NodeIndexBox.style = WindowHeight > WindowWidth
     ? `height: 100%; width: 100%;`
@@ -27,13 +30,25 @@
   /* 下一个方块显示区域 样式获取绘制 end */
 
   let cubeArray = new Array() // 方块数组
-  let moveTime = 400 // 下落速度（moveTime ms 下落一次）
+  let moveTime = 600 // 下落速度（moveTime ms 下落一次）
   let isSpeedUp = false // 是否已经加速
   let thisCube = undefined // 当前实心方块
   let nextCubeType = undefined // 下一个方块种类
   let interval = undefined // 定时
   let keyCanOperate = false // 键盘是否可以操作
   let gameOverRestart = false // 是否是游戏结束重新开始
+  let level = 1 // 游戏等级
+
+  // 游戏等级
+  const LEVEL_ARRAY = [
+    { level: 1, moveTime: 600, min: 0, max: 5000, },
+    { level: 2, moveTime: 500, min: 5000, max: 10000, },
+    { level: 3, moveTime: 400, min: 10000, max: 20000, },
+    { level: 4, moveTime: 300, min: 20000, max: 40000, },
+    { level: 5, moveTime: 200, min: 40000, max: 100000, },
+    { level: 6, moveTime: 100, min: 100000, max: 200000, },
+    { level: 7, moveTime: 50, min: 200000, max: Infinity, },
+  ]
 
   // 方块种类OBJ
   const CUBE_TYPE = {
@@ -76,8 +91,11 @@
       gameOverRestart && init()
       keyCanOperate = true
       NodeButtonStart.disabled = true
+      moveTime = 600
+      level = 1
+      NodeLevel.innerText = 1
       produceCube()
-      initInterval(moveTime)
+      initInterval(600)
     }
   }
   // 键盘按键按下
@@ -108,8 +126,16 @@
     initCubeArray()
     getNextCubeType()
     printCube()
+    getMaxFraction()
+    printNextCube()
   }
   init()
+
+  // 获取最大得分
+  function getMaxFraction() {
+    const fraction = localStorage.getItem('maxFraction') || 0
+    NodeFractionMax.innerText = fraction
+  }
 
   // 方块绘制
   function printCube() {
@@ -171,7 +197,7 @@
         // 如果循环的k不等于x的长度
         if (nextCube !== undefined && k !== nextCube.x.length) {
           // 渲染实心方块
-          strCubes += CUBE_SOLID(_nextCubeWidth ,nextCube.className)
+          strCubes += CUBE_SOLID(_nextCubeWidth, nextCube.className)
         } else {
           strCubes += CUBE_HOLLOW(_nextCubeWidth)
         }
@@ -179,7 +205,6 @@
     }
     NodeNextCubeBox.innerHTML = strCubes
   }
-  printNextCube()
 
   // 初始化方块数组（全部为空心块）
   function initCubeArray() {
@@ -271,12 +296,36 @@
 
   // 检测一行是否全部是实心方块
   function eliminateLine() {
+    let removeLineNum = 0
     for (let i = 0; i < cubeArray.length; i++) {
       let solidNum = 0
       for (let j = 0; j < cubeArray[i].length; j++) {
         chatIsSolid(j, i) && (solidNum += 1)
       }
-      solidNum === cubeArray[i].length && removeLine(i)
+      if (solidNum === cubeArray[i].length) {
+        removeLine(i)
+        removeLineNum++
+      }
+    }
+    // 如果消除了行则开始积分
+    // 积分规则为 行数*100*行数
+    if (removeLineNum) {
+      const fraction = 100 * removeLineNum * removeLineNum
+      const nowFraction = +NodeFractionNow.innerText
+      NodeFractionNow.innerText = nowFraction + fraction
+      updateLevel(nowFraction + fraction)
+    }
+  }
+
+  // 提升难度
+  function updateLevel(fraction) {
+    const levelObj = LEVEL_ARRAY[level]
+    if (fraction >= levelObj.min && fraction < levelObj.max && level !== levelObj.level && moveTime !== levelObj.moveTime) {
+      moveTime = levelObj.moveTime
+      level = levelObj.level
+      NodeLevel.innerText = levelObj.level
+      window.clearInterval(interval)
+      initInterval(levelObj.moveTime)
     }
   }
 
@@ -317,6 +366,12 @@
     NodeButtonStart.disabled = false
     gameOverRestart = true
     window.clearInterval(interval)
+    const fraction = +NodeFractionNow.innerText
+    const fractionMax = localStorage.getItem('maxFraction') || 0
+    if (fraction > fractionMax) {
+      localStorage.setItem('maxFraction', fraction)
+      NodeFractionMax.innerText = fraction
+    }
   }
 
   // 键盘操作 方块横移 左-1 右1
@@ -403,24 +458,6 @@
     cube.className = 'cube-I'
     return cube
   }
-
-  // 以下为方块种类
-  /**
-   * I型 旋转90
-   * ■
-   * ■
-   * ■
-   * ■
-   */
-  // function CUBE_I_ROTATE_90(cube) {
-  //   for (let i = 0; i <= 3; i++) {
-  //     cube.x[i] = 5
-  //     cube.y[i] = -1 - i
-  //   }
-  //   cube.center = 1 // 方块的旋转中心
-  //   cube.className = 'cube-I'
-  //   return cube
-  // }
 
   /**
    * T型

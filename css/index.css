@@ -28,12 +28,36 @@ body {
 
 .index-box .cube-display-box .cube-right-box {
   height: 98%;
-  flex: 1;
   padding-left: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .index-box .cube-display-box .cube-right-box div {
   width: 100%;
+}
+
+.index-box .cube-display-box .cube-right-box .game-fraction {
+  border: 1px solid #000;
+  padding: 2px;
+}
+
+.level {
+  padding: 2px;
+  border: 1px solid #000;
+}
+
+.game-fraction .fraction-box {
+  height: 24px;
+  line-height: 24px;
+}
+
+.game-fraction .max-fraction,
+.game-fraction .now-fraction {
+  text-align: right;
+  font-weight: bold;
 }
 
 .game-buttons {
