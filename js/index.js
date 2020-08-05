@@ -33,6 +33,7 @@
   let nextCubeType = undefined // 下一个方块种类
   let interval = undefined // 定时
   let keyCanOperate = false // 键盘是否可以操作
+  let gameOverRestart = false // 是否是游戏结束重新开始
 
   // 方块种类OBJ
   const CUBE_TYPE = {
@@ -70,8 +71,9 @@
   }
 
   // 点击开始按钮
-  NodeButtonStart.onclick = (e) => {
+  NodeButtonStart.onclick = () => {
     if (!keyCanOperate) {
+      gameOverRestart && init()
       keyCanOperate = true
       NodeButtonStart.disabled = true
       produceCube()
@@ -142,14 +144,13 @@
 
   // 显示下一个方块
   function printNextCube() {
-    console.log('next cube show box')
     let strCubes = ''
     const nextCube = nextCubeType !== undefined ? getCubeByType(nextCubeType) : undefined
     if (nextCube !== undefined) {
       // 修改样式显示
       for (let i = 0; i < nextCube.x.length; i++) {
         nextCube.x[i] = nextCube.x[i] - 3
-        nextCube.y[i] = nextCube.y[i] + 2
+        nextCube.y[i] = nextCube.y[i] + 3
       }
     }
     // 循环行数 同渲染方块运动页面
@@ -238,7 +239,6 @@
 
   // 方块下落
   function cubeDrop() {
-    console.log(isBump(0, 1))
     isBump(0, 1) && cubeFixed()
     drop()
   }
@@ -315,6 +315,7 @@
     console.log('game over')
     keyCanOperate = false
     NodeButtonStart.disabled = false
+    gameOverRestart = true
     window.clearInterval(interval)
   }
 
@@ -396,7 +397,7 @@
   function CUBE_I(cube) {
     for (let i = 0; i <= 3; i++) {
       cube.x[i] = _columns / 2 + i - 2
-      cube.y[i] = 0
+      cube.y[i] = -1
     }
     cube.center = 1 // 方块的旋转中心
     cube.className = 'cube-I'
@@ -429,10 +430,10 @@
   function CUBE_T(cube) {
     for (let i = 0; i < 3; i++) {
       cube.x[i] = _columns / 2 - 1 + i
-      cube.y[i] = 0
+      cube.y[i] = -1
     }
     cube.x[3] = _columns / 2 // T型顶部x位置
-    cube.y[3] = -1 // T型顶部y位置
+    cube.y[3] = -2 // T型顶部y位置
     cube.center = 1 // 方块的旋转中心
     cube.className = 'cube-T'
     return cube
@@ -447,10 +448,10 @@
     for (let i = 0; i <= 3; i++) {
       if (i < 2) {
         cube.x[i] = _columns / 2 + i
-        cube.y[i] = 0
+        cube.y[i] = -1
       } else {
         cube.x[i] = _columns / 2 + i - 3
-        cube.y[i] = -1
+        cube.y[i] = -2
       }
     }
     cube.center = 0 // 方块的旋转中心
@@ -467,10 +468,10 @@
     for (let i = 0; i <= 3; i++) {
       if (i < 2) {
         cube.x[i] = _columns / 2 + i - 1
-        cube.y[i] = 0
+        cube.y[i] = -1
       } else {
         cube.x[i] = _columns / 2 + i - 2
-        cube.y[i] = -1
+        cube.y[i] = -2
       }
     }
     cube.center = 1 // 方块的旋转中心
@@ -487,10 +488,10 @@
     for (let i = 0; i <= 3; i++) {
       if (i < 2) {
         cube.x[i] = _columns / 2 + i - 1
-        cube.y[i] = 0
+        cube.y[i] = -1
       } else {
         cube.x[i] = _columns / 2 + i - 3
-        cube.y[i] = -1
+        cube.y[i] = -2
       }
     }
     cube.center = -1 // 0型不能旋转
@@ -506,10 +507,10 @@
   function CUBE_L(cube) {
     for (let i = 0; i < 3; i++) {
       cube.x[i] = _columns / 2 + i - 1
-      cube.y[i] = 0
+      cube.y[i] = -1
     }
     cube.x[3] = _columns / 2 + 1
-    cube.y[3] = -1
+    cube.y[3] = -2
     cube.center = 1 // 方块的旋转中心
     cube.className = 'cube-L'
     return cube
@@ -523,10 +524,10 @@
   function CUBE_L_MIRROR(cube) {
     for (let i = 0; i < 3; i++) {
       cube.x[i] = _columns / 2 + i - 1
-      cube.y[i] = 0
+      cube.y[i] = -1
     }
     cube.x[3] = _columns / 2 - 1
-    cube.y[3] = -1
+    cube.y[3] = -2
     cube.center = 1 // 方块的旋转中心
     cube.className = 'cube-L-mirror'
     return cube
