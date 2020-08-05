@@ -1,22 +1,28 @@
 (function () {
-  const cubeBox = document.querySelector('.cube-box-content') // 方块盒子
-  const cubeBoxParent = document.querySelector('.cube-box-parent')
-  // cube-box-parent
-  const _conWidth = 300
-  const _conHeight = _conWidth * 2
-  cubeBoxParent.style = `width: ${_conWidth}px; height: ${_conHeight}px;`
+  const NodeCubeBox = document.querySelector('.cube-box-content') // 方块盒子
+  const NodeCubeBoxParent = document.querySelector('.cube-box-parent') // 方块盒子的父元素
+  const NodeButtonStart = document.querySelector('#button-start') // 开始按钮
+  const _conWidth = 300 // 定义绘制区域的宽度
+  const _conHeight = _conWidth * 2 // 定义绘制区域的高度
 
   const _columns = 10 // 列数
-  const _rows = _columns * 2 + 1 // 行数
+  // 行数 列数双倍 + 1
+  // 第一行让NodeCubeBoxParent的overflow: hidden挡住
+  // 解决生成方块高度为2直接game over的情况
+  const _rows = _columns * 2 + 1
   const _cubeWidth = _conWidth / _columns // 方块边长
-  cubeBox.style = `width: ${_conWidth}px; height: ${_conHeight}px;position: absolute;left: 0;top: -${_cubeWidth}px;`
+  // 定义NodeCubeBoxParent的宽高
+  NodeCubeBoxParent.style = `width: ${_conWidth}px; height: ${_conHeight}px;`
+  // 定义NodeCubeBox的宽，因为多一行所以定位向上移动一个方块距离
+  NodeCubeBox.style = `width: ${_conWidth}px; position: absolute;left: 0;top: -${_cubeWidth}px;`
 
   let cubeArray = new Array() // 方块数组
-  let thisCube = undefined // 当前实心方块
-  let nextCubeType = undefined
   let moveTime = 400 // 下落速度（moveTime ms 下落一次）
-  let interval = undefined
-  let keyCanOperate = true // 键盘是否可以操作
+  let isSpeedUp = false // 是否已经加速
+  let thisCube = undefined // 当前实心方块
+  let nextCubeType = undefined // 下一个方块种类
+  let interval = undefined // 定时
+  let keyCanOperate = false // 键盘是否可以操作
 
   // 方块种类OBJ
   const CUBE_TYPE = {
@@ -30,11 +36,17 @@
   }
 
   // 按键方式OBJ
-  const KEY_CODE_TYPE = {
-    37: () => KEY_CODE_MOVE(-1), // 键盘左键
-    39: () => KEY_CODE_MOVE(1), // 键盘右键
-    40: () => KEY_CODE_DOWN(), // 键盘下键
-    38: () => KEY_CODE_ROTATE(-1), // 键盘上键(暂时只让逆时针旋转)
+  const KEY_DOWN_CODE_TYPE = {
+    37: () => KEY_DOWN_MOVE(-1), // 键盘左键 方块左移
+    39: () => KEY_DOWN_MOVE(1), // 键盘右键 方块右移
+    40: () => KEY_DOWN_SPEED_UP(), // 键盘下键 加速移动
+    38: () => KEY_DOWN_ROTATE(1), // 键盘上键 方块顺时针旋转
+    32: () => KEY_DOWN_DOWN(), // 键盘空格 方块快速下到底部
+  }
+
+  // 键盘抬起方式
+  const KEY_UP_CODE_TYPE = {
+    40: () => KEY_UP_SLOW_DOWN(), // 键盘下键 加速移动
   }
 
   // 空心方块
@@ -48,79 +60,35 @@
   }
 
   // 点击开始按钮
-  document.querySelector('#button-start').onclick = () => {
-    keyCanOperate = true
-    produceCube()
-    interval = window.setInterval(() => {
-      cubeDrop()
-    }, moveTime)
+  NodeButtonStart.onclick = (e) => {
+    if (!keyCanOperate) {
+      keyCanOperate = true
+      NodeButtonStart.disabled = true
+      produceCube()
+      initInterval(moveTime)
+    }
   }
-
   // 键盘按键按下
   document.onkeydown = ({ keyCode }) => {
-    if (keyCanOperate && KEY_CODE_TYPE.hasOwnProperty(keyCode)) {
-      KEY_CODE_TYPE[keyCode].call(this)
+    if (keyCanOperate && KEY_DOWN_CODE_TYPE.hasOwnProperty(keyCode)) {
+      KEY_DOWN_CODE_TYPE[keyCode].call(this)
       printCube()
     }
   }
 
-  // 键盘案件抬起
-  document.onkeyup = (e) => {
-    // console.log('keyup', e)
-  }
-
-  // 键盘操作 方块横移 左-1 右1
-  function KEY_CODE_MOVE(moveX) {
-    !isBump(moveX, 0) && move(moveX)
-    printCube()
-  }
-
-  // 方块横移
-  function move(moveX) {
-    for (let i = 0; i < thisCube.x.length; i++) {
-      thisCube.x[i] += moveX
+  // 键盘按键抬起
+  document.onkeyup = ({ keyCode }) => {
+    if (keyCanOperate && KEY_UP_CODE_TYPE.hasOwnProperty(keyCode)) {
+      KEY_UP_CODE_TYPE[keyCode].call(this)
+      printCube()
     }
   }
 
-  // 键盘操作 方块下到底部
-  function KEY_CODE_DOWN() {
-    while (drop()) { }
-    cubeFixed()
-  }
-
-  // 键盘操作 方块旋转 顺时针1 逆时针-1
-  function KEY_CODE_ROTATE(r) {
-    if (thisCube.center === -1) {
-      // 中心点是-1时不能旋转
-      return
-    }
-    rotate(r)
-    // 如果旋转后发生碰撞则转回去
-    isBump(0, 0) && rotate(-r)
-    printCube()
-  }
-
-  // 方块旋转
-  function rotate(r) {
-    // 根据中心点选取中心
-    const rX = thisCube.x[thisCube.center]
-    const rY = thisCube.y[thisCube.center]
-    for (let i = 0; i < thisCube.x.length; i++) {
-      // 旋转前的方块位置
-      const nX = thisCube.x[i]
-      const nY = thisCube.y[i]
-      console.log('r', r)
-
-      if (r) {
-        // 顺时针 计算四元方程组
-        thisCube.x[i] = rX + rY - nY
-        thisCube.y[i] = nX + rY - rX
-      } else {
-        // 逆时针
-        thisCube.x[i] = nY + rX - rY
-        thisCube.y[i] = rX + rY - nX
-      }
-    }
+  // 初始化定时器
+  function initInterval(intervalTime) {
+    interval = window.setInterval(() => {
+      cubeDrop()
+    }, intervalTime)
   }
 
   // 初始化
@@ -150,7 +118,6 @@
           }
         }
         // 如果循环的k不等于x的长度
-        // console.log(k)
         if (thisCube !== undefined && k !== thisCube.x.length) {
           // 渲染实心方块
           strCubes += CUBE_SOLID(thisCube.className)
@@ -160,7 +127,7 @@
         }
       }
     }
-    cubeBox.innerHTML = strCubes
+    NodeCubeBox.innerHTML = strCubes
   }
 
   // 显示下一个方块
@@ -176,7 +143,6 @@
         cubeArray[i][j] = CUBE_HOLLOW() // 空心快
       }
     }
-    // console.log(cubeArray)
   }
 
   // 获取方块种类
@@ -282,7 +248,6 @@
   // 产生方块
   function produceCube() {
     thisCube = getCubeByType(nextCubeType)
-    // console.log(nextCubeType)
     getNextCubeType()
     printNextCube()
   }
@@ -303,6 +268,77 @@
     console.log('game over')
     window.clearInterval(interval)
     keyCanOperate = false
+    NodeButtonStart.disabled = false
+  }
+
+  // 键盘操作 方块横移 左-1 右1
+  function KEY_DOWN_MOVE(moveX) {
+    !isBump(moveX, 0) && move(moveX)
+    printCube()
+  }
+
+  // 方块横移
+  function move(moveX) {
+    for (let i = 0; i < thisCube.x.length; i++) {
+      thisCube.x[i] += moveX
+    }
+  }
+
+  // 键盘操作 移动加速
+  function KEY_DOWN_SPEED_UP() {
+    if (!isSpeedUp) {
+      isSpeedUp = true
+      window.clearInterval(interval)
+      initInterval(moveTime / 2)
+    }
+  }
+
+  // 键盘操作 方块下到底部
+  function KEY_DOWN_DOWN() {
+    while (drop()) { }
+    cubeFixed()
+  }
+
+  // 键盘操作 方块旋转 顺时针1 逆时针-1
+  function KEY_DOWN_ROTATE(r) {
+    if (thisCube.center === -1) {
+      // 中心点是-1时不能旋转
+      return
+    }
+    rotate(r)
+    // 如果旋转后发生碰撞则转回去
+    isBump(0, 0) && rotate(-r)
+    printCube()
+  }
+
+  // 方块旋转
+  function rotate(r) {
+    // 根据中心点选取中心
+    const rX = thisCube.x[thisCube.center]
+    const rY = thisCube.y[thisCube.center]
+    for (let i = 0; i < thisCube.x.length; i++) {
+      // 旋转前的方块位置
+      const nX = thisCube.x[i]
+      const nY = thisCube.y[i]
+      if (r === 1) {
+        // 顺时针 计算四元方程组
+        thisCube.x[i] = rX + rY - nY
+        thisCube.y[i] = nX + rY - rX
+      } else {
+        // 逆时针
+        thisCube.x[i] = nY + rX - rY
+        thisCube.y[i] = rX + rY - nX
+      }
+    }
+  }
+
+  // 键盘抬起 减速
+  function KEY_UP_SLOW_DOWN() {
+    if (isSpeedUp) {
+      isSpeedUp = false
+      window.clearInterval(interval)
+      initInterval(moveTime)
+    }
   }
 
   // 以下为方块种类
