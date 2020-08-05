@@ -1,47 +1,41 @@
 * {
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
-}
-
-.index-box {
+  width: 100vw;
   height: 100vh;
-  width: 100%;
   overflow: hidden;
 }
 
-.index-box .cube-box-parent {
-  /* width: 300px;
-  height: 900px; */
-  /* background-color: paleturquoise; */
-  margin: 20px auto;
-  position: relative;
-  overflow:hidden;
-  /* border: 2px solid #000; */
-  /* box-sizing: content-box; */
+.index-box {
+  overflow: hidden;
+  background-color: cadetblue;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
 }
 
-.cube-move-box {
-  height: 100%;
+.index-box .cube-display-box {
+  flex: 1;
+  display: flex;
+}
+
+.index-box .cube-display-box .cube-box {
+  height: 98%;
+}
+
+.index-box .cube-display-box .cube-right-box {
+  height: 98%;
+  flex: 1;
+  padding-left: 12px;
+}
+
+.index-box .cube-display-box .cube-right-box div {
   width: 100%;
 }
 
-
-.vertical {
-  height: 100%;
-  width: 1px;
-  box-shadow: 1px 0 0 #000;
-  /* width: 1px; */
-  /* background-color: black; */
-  position: absolute;
-}
-
-.horizontal {
-  height: 1px;
-  width: 100%;
-  box-shadow: 0px 1px 0 #000;
-  /* width: 1px; */
-  /* background-color: black; */
-  position: absolute;
+.game-buttons {
+  height: 20%;
 }

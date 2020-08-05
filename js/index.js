@@ -1,20 +1,30 @@
 (function () {
-  const NodeCubeBox = document.querySelector('.cube-box-content') // 方块盒子
-  const NodeCubeBoxParent = document.querySelector('.cube-box-parent') // 方块盒子的父元素
+  // 获取窗口的宽高
+  const WindowWidth = window.innerWidth
+  const WindowHeight = window.innerHeight
+  const NodeIndexBox = document.querySelector('.index-box') // 最外部的盒子
+  const NodeCubeBox = document.querySelector('.cube-box') // 方块盒子渲染区域
+  const NodeNextCubeBox = document.querySelector('.the-next-cube') // 下一个方块的显示盒子
   const NodeButtonStart = document.querySelector('#button-start') // 开始按钮
-  const _conWidth = 300 // 定义绘制区域的宽度
-  const _conHeight = _conWidth * 2 // 定义绘制区域的高度
+  // 如果视窗高度大于宽度则将内容（NodeIndexBox）扩展到100%
+  NodeIndexBox.style = WindowHeight > WindowWidth
+    ? `height: 100%; width: 100%;`
+    : `height: ${WindowHeight}px; width: ${WindowHeight / 1.8}px; margin: 0 auto;`
 
+  const _conHeight = NodeCubeBox.clientHeight // 定义绘制区域的高度
+  const _conWidth = _conHeight / 2 // 定义绘制区域的宽度
   const _columns = 10 // 列数
-  // 行数 列数双倍 + 1
-  // 第一行让NodeCubeBoxParent的overflow: hidden挡住
-  // 解决生成方块高度为2直接game over的情况
-  const _rows = _columns * 2 + 1
+  const _rows = _columns * 2 // 行数
   const _cubeWidth = _conWidth / _columns // 方块边长
-  // 定义NodeCubeBoxParent的宽高
-  NodeCubeBoxParent.style = `width: ${_conWidth}px; height: ${_conHeight}px;`
-  // 定义NodeCubeBox的宽，因为多一行所以定位向上移动一个方块距离
-  NodeCubeBox.style = `width: ${_conWidth}px; position: absolute;left: 0;top: -${_cubeWidth}px;`
+  NodeCubeBox.style = `width: ${_conWidth}px;` // 定义NodeCubeBox的宽
+
+  /* 下一个方块显示区域 样式获取绘制 start */
+  const _nextWidth = NodeNextCubeBox.clientWidth
+  NodeNextCubeBox.style = `height: ${_nextWidth / 2}px`
+  const _nextColumns = 4
+  const _nextRows = 4
+  const _nextCubeWidth = _nextWidth / _nextColumns
+  /* 下一个方块显示区域 样式获取绘制 end */
 
   let cubeArray = new Array() // 方块数组
   let moveTime = 400 // 下落速度（moveTime ms 下落一次）
@@ -50,13 +60,13 @@
   }
 
   // 空心方块
-  const CUBE_HOLLOW = (className) => {
-    return `<div style="width: ${_cubeWidth}px;height: ${_cubeWidth}px;border: 1px solid #000;float: left;" class="cube-hollow ${className || ''}"></div>`
+  const CUBE_HOLLOW = (w, className) => {
+    return `<div style="width: ${w}px;height: ${w}px;border: 1px solid #000;float: left;" class="cube-hollow ${className || ''}"></div>`
   }
 
   // 实心方块
-  const CUBE_SOLID = (className) => {
-    return `<div style="width: ${_cubeWidth}px;height: ${_cubeWidth}px;border: 1px solid #000;float: left;background: #000" class="cube-solid ${className || ''}"></div>`
+  const CUBE_SOLID = (w, className) => {
+    return `<div style="width: ${w}px;height: ${w}px;border: 1px solid #000;float: left;background: #000" class="cube-solid ${className || ''}"></div>`
   }
 
   // 点击开始按钮
@@ -120,7 +130,7 @@
         // 如果循环的k不等于x的长度
         if (thisCube !== undefined && k !== thisCube.x.length) {
           // 渲染实心方块
-          strCubes += CUBE_SOLID(thisCube.className)
+          strCubes += CUBE_SOLID(_cubeWidth, thisCube.className)
         } else {
           // 按照现有方块渲染
           strCubes += cubeArray[i][j]
@@ -133,14 +143,49 @@
   // 显示下一个方块
   function printNextCube() {
     console.log('next cube show box')
+    let strCubes = ''
+    const nextCube = nextCubeType !== undefined ? getCubeByType(nextCubeType) : undefined
+    if (nextCube !== undefined) {
+      // 修改样式显示
+      for (let i = 0; i < nextCube.x.length; i++) {
+        nextCube.x[i] = nextCube.x[i] - 3
+        nextCube.y[i] = nextCube.y[i] + 2
+      }
+    }
+    // 循环行数 同渲染方块运动页面
+    for (let i = 0; i < _nextRows; i++) {
+      // 循环每行几列
+      for (let j = 0; j < _nextColumns; j++) {
+        let k = 0
+        if (nextCube !== undefined) {
+          for (k = 0; k < nextCube.x.length; k++) {
+            // 如果当前行等于生成方块的y
+            // 如果当前列等于生成方块的x
+            if (i === nextCube.y[k] && j === nextCube.x[k]) {
+              // 跳出循环
+              break
+            }
+          }
+        }
+        // 如果循环的k不等于x的长度
+        if (nextCube !== undefined && k !== nextCube.x.length) {
+          // 渲染实心方块
+          strCubes += CUBE_SOLID(_nextCubeWidth ,nextCube.className)
+        } else {
+          strCubes += CUBE_HOLLOW(_nextCubeWidth)
+        }
+      }
+    }
+    NodeNextCubeBox.innerHTML = strCubes
   }
+  printNextCube()
 
   // 初始化方块数组（全部为空心块）
   function initCubeArray() {
     for (let i = 0; i < _rows; i++) {
       cubeArray[i] = new Array()
       for (let j = 0; j < _columns; j++) {
-        cubeArray[i][j] = CUBE_HOLLOW() // 空心快
+        cubeArray[i][j] = CUBE_HOLLOW(_cubeWidth) // 空心快
       }
     }
   }
@@ -160,7 +205,7 @@
 
   // 删除指定位置方块 将指定位置方块替换为空心块
   function removeChat(x, y) {
-    cubeArray[y][x] = CUBE_HOLLOW()
+    cubeArray[y][x] = CUBE_HOLLOW(_cubeWidth)
   }
 
   // 获取指定位置方块
@@ -173,17 +218,18 @@
     if (cubeArray[y] && cubeArray[y][x]) {
       return cubeArray[y][x].includes('cube-solid')
     } else {
-      return true
+      return false
     }
   }
 
   // 是否有碰撞 dx dy为偏移量 即移动的距离
   function isBump(dx, dy) {
     for (let i = 0; i < thisCube.x.length; i++) {
+      // _columns = 10, x >= 0, x <= 9
       // 下一步运动左右超出
       // 下一步运动超出高度
       // 下一步运动存在实心方块
-      if (thisCube.x[i] + dx < 0 || thisCube.x[i] + dx > _columns || thisCube.y[i] + dy >= _rows || chatIsSolid(thisCube.x[i] + dx, thisCube.y[i] + dy)) {
+      if (thisCube.x[i] + dx < 0 || thisCube.x[i] + dx > _columns - 1 || thisCube.y[i] + dy >= _rows || chatIsSolid(thisCube.x[i] + dx, thisCube.y[i] + dy)) {
         return true
       }
     }
@@ -192,6 +238,7 @@
 
   // 方块下落
   function cubeDrop() {
+    console.log(isBump(0, 1))
     isBump(0, 1) && cubeFixed()
     drop()
   }
@@ -216,7 +263,7 @@
         gameOver()
         return
       }
-      drawChat(thisCube.x[i], thisCube.y[i], CUBE_SOLID(thisCube.className))
+      drawChat(thisCube.x[i], thisCube.y[i], CUBE_SOLID(_cubeWidth, thisCube.className))
     }
     produceCube()
     eliminateLine()
@@ -239,7 +286,7 @@
     cubeArray.splice(y, 1)
     const colArr = new Array()
     for (let j = 0; j < _columns; j++) {
-      colArr[j] = CUBE_HOLLOW() // 空心快
+      colArr[j] = CUBE_HOLLOW(_cubeWidth) // 空心快
     }
     // 在前面插入空白方块
     cubeArray.unshift(colArr)
@@ -266,9 +313,9 @@
   // 游戏结束
   function gameOver() {
     console.log('game over')
-    window.clearInterval(interval)
     keyCanOperate = false
     NodeButtonStart.disabled = false
+    window.clearInterval(interval)
   }
 
   // 键盘操作 方块横移 左-1 右1
@@ -355,6 +402,24 @@
     cube.className = 'cube-I'
     return cube
   }
+
+  // 以下为方块种类
+  /**
+   * I型 旋转90
+   * ■
+   * ■
+   * ■
+   * ■
+   */
+  // function CUBE_I_ROTATE_90(cube) {
+  //   for (let i = 0; i <= 3; i++) {
+  //     cube.x[i] = 5
+  //     cube.y[i] = -1 - i
+  //   }
+  //   cube.center = 1 // 方块的旋转中心
+  //   cube.className = 'cube-I'
+  //   return cube
+  // }
 
   /**
    * T型
