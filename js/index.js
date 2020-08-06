@@ -92,6 +92,7 @@
   // 点击开始按钮
   NodeButtonStart.onclick = () => {
     if (!keyCanOperate) {
+      thisCube = undefined
       gameOverRestart && init()
       keyCanOperate = true
       NodeButtonStart.disabled = true
@@ -366,11 +367,12 @@
 
   // 游戏结束
   function gameOver() {
-    console.log('game over')
     keyCanOperate = false
     NodeButtonStart.disabled = false
     gameOverRestart = true
     window.clearInterval(interval)
+    thisCube = GAME_OVER_CUBES()
+    printCube()
     NodeButtonStart.innerText = 'RESTART'
     const fraction = +NodeFractionNow.innerText
     const fractionMax = localStorage.getItem('maxFraction') || 0
@@ -573,6 +575,171 @@
     cube.y[3] = -2
     cube.center = 1 // 方块的旋转中心
     cube.className = 'cube-L-mirror'
+    return cube
+  }
+
+  // game over 显示块
+  function GAME_OVER_CUBES() {
+    const cube = new Object()
+    cube.x = new Array()
+    cube.y = new Array()
+    cube.center = -1
+    cube.className = 'game-over-cubes'
+    // G 14个 0~13
+    for (let i = 0; i <= 13; i++) {
+      if (i <= 3) {
+        cube.x[i] = i
+        cube.y[i] = 0
+      }
+      if (i >= 10) {
+        cube.x[i] = 13 - i
+        cube.y[i] = 4
+      }
+      if (i >= 4 && i <= 6) {
+        cube.x[i] = 0
+        cube.y[i] = i - 3
+      }
+      if (i >= 7 && i <= 8) {
+        cube.x[i] = 3
+        cube.y[i] = i - 5
+      }
+    }
+    cube.x[9] = 2
+    cube.y[9] = 2
+
+    // A 12个 14 ~ 25
+    for (let i = 14; i <= 21; i++) {
+      if (i >= 14 && i <= 17) {
+        cube.x[i] = 23 - i
+        cube.y[i] = 0
+      }
+      if (i >= 18 && i <= 21) {
+        cube.x[i] = 27 - i
+        cube.y[i] = 2
+      }
+    }
+    cube.x[22] = 6
+    cube.y[22] = 1
+    cube.x[23] = 6
+    cube.y[23] = 3
+    cube.x[24] = 9
+    cube.y[24] = 1
+    cube.x[25] = 9
+    cube.y[25] = 3
+
+    // M 14个 26~39
+    for (let i = 26; i <= 39; i++) {
+      if (i >= 26 && i <= 30) {
+        cube.x[i] = 30 - i
+        cube.y[i] = 6
+      }
+      if (i >= 31 && i <= 33) {
+        cube.x[i] = 0
+        cube.y[i] = 40 - i
+      }
+      if (i >= 34 && i <= 36) {
+        cube.x[i] = 2
+        cube.y[i] = 43 - i
+      }
+      if (i >= 37 && i <= 39) {
+        cube.x[i] = 4
+        cube.y[i] = 46 - i
+      }
+    }
+
+    // E 13个 40~52
+    for (let i = 40; i <= 50; i++) {
+      if (i >= 40 && i <= 43) {
+        cube.x[i] = 49 - i
+        cube.y[i] = 5
+      }
+      if (i >= 44 && i <= 46) {
+        cube.x[i] = 52 - i
+        cube.y[i] = 7
+      }
+      if (i >= 47 && i <= 50) {
+        cube.x[i] = 56 - i
+        cube.y[i] = 9
+      }
+    }
+    cube.x[51] = 6
+    cube.y[51] = 6
+    cube.x[52] = 6
+    cube.y[52] = 8
+
+    // o 9个 53~60
+    for (let i = 53; i <= 58; i++) {
+      if (i >= 53 && i <= 55) {
+        cube.x[i] = 56 - i
+        cube.y[i] = 11
+      }
+      if (i >= 56 && i <= 58) {
+        cube.x[i] = 59 - i
+        cube.y[i] = 13
+      }
+    }
+    cube.x[59] = 1
+    cube.y[59] = 12
+    cube.x[60] = 3
+    cube.y[60] = 12
+
+    // v 5个 61~65
+    for (let i = 61; i <= 64; i++) {
+      if (i >= 61 && i <= 62) {
+        cube.x[i] = 6
+        cube.y[i] = 73 - i
+      }
+      if (i >= 63 && i <= 64) {
+        cube.x[i] = 8
+        cube.y[i] = 75 - i
+      }
+    }
+    cube.x[65] = 7
+    cube.y[65] = 13
+
+    // E 13个 66~78
+    for (let i = 66; i <= 76; i++) {
+      if (i >= 66 && i <= 69) {
+        cube.x[i] = 69 - i
+        cube.y[i] = 15
+      }
+      if (i >= 70 && i <= 72) {
+        cube.x[i] = 72 - i
+        cube.y[i] = 17
+      }
+      if (i >= 73 && i <= 76) {
+        cube.x[i] = 76 - i
+        cube.y[i] = 19
+      }
+    }
+    cube.x[77] = 0
+    cube.y[77] = 16
+    cube.x[78] = 0
+    cube.y[78] = 18
+
+    // R 13个 79~91
+    for (let i = 79; i <= 89; i++) {
+      if (i >= 79 && i <= 83) {
+        cube.x[i] = 6
+        cube.y[i] = 98 - i
+      }
+      if (i >= 84 && i <= 85) {
+        cube.x[i] = 92 - i
+        cube.y[i] = 15
+      }
+      if (i >= 86 && i <= 87) {
+        cube.x[i] = 86 + 8 - i
+        cube.y[i] = 17
+      }
+      if (i >= 88 && i <= 89) {
+        cube.x[i] = 9
+        cube.y[i] = 17 + 88 - i
+      }
+    }
+    cube.x[90] = 8
+    cube.y[90] = 18
+    cube.x[91] = 9
+    cube.y[91] = 19
     return cube
   }
 })()
