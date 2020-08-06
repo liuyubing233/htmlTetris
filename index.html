@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tetris</title>
   <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="./css/defalutStyle.css">
   <style>
     .icon {
       width: 1em;
@@ -20,13 +21,16 @@
 </head>
 
 <body>
-  <div class="index-box">
+  <div class="index-box default-style">
     <div class="cube-display-box">
       <div class="cube-box"></div>
       <div class="cube-right-box">
-        <div class="the-next-cube"></div>
+        <div class="the-next">
+          <div class="the-next-cube-title">NEXT</div>
+          <div class="the-next-cube"></div>
+        </div>
         <div class="level">
-          level:
+          <span class="level-title">level:</span>
           <span class="level-span">1</span>
         </div>
         <div class="game-fraction">
@@ -75,7 +79,6 @@
     </div>
   </div>
   <script src="./js/index.js"></script>
-
 </body>
 
 </html>

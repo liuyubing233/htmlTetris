@@ -1,3 +1,4 @@
+/* 基本布局样式 */
 * {
   box-sizing: border-box;
 }
@@ -11,7 +12,6 @@ body {
 
 .index-box {
   overflow: hidden;
-  background-color: cadetblue;
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -50,7 +50,6 @@ body {
 }
 
 .game-fraction .fraction-box {
-  height: 24px;
   line-height: 24px;
 }
 

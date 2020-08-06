@@ -25,9 +25,9 @@
 
   /* 下一个方块显示区域 样式获取绘制 start */
   const _nextWidth = NodeNextCubeBox.clientWidth
-  NodeNextCubeBox.style = `height: ${_nextWidth / 2}px`
-  const _nextColumns = 4
-  const _nextRows = 4
+  NodeNextCubeBox.style = `height: ${_nextWidth}px`
+  const _nextColumns = 6
+  const _nextRows = 6
   const _nextCubeWidth = _nextWidth / _nextColumns
   /* 下一个方块显示区域 样式获取绘制 end */
 
@@ -76,17 +76,17 @@
 
   // 键盘抬起方式
   const KEY_UP_CODE_TYPE = {
-    40: () => KEY_UP_SLOW_DOWN(), // 键盘下键 加速移动
+    40: () => KEY_UP_SLOW_DOWN(), // 抬起下键 速度变慢
   }
 
   // 空心方块
   const CUBE_HOLLOW = (w, className) => {
-    return `<div style="width: ${w}px;height: ${w}px;border: 1px solid #000;float: left;" class="cube-hollow ${className || ''}"></div>`
+    return `<div style="width: ${w}px;height: ${w}px;float: left;" class="cube-hollow ${className || ''}"></div>`
   }
 
   // 实心方块
   const CUBE_SOLID = (w, className) => {
-    return `<div style="width: ${w}px;height: ${w}px;border: 1px solid #000;float: left;background: #000" class="cube-solid ${className || ''}"></div>`
+    return `<div style="width: ${w}px;height: ${w}px;float: left;" class="cube-solid ${className || ''}"></div>`
   }
 
   // 点击开始按钮
@@ -104,11 +104,11 @@
   }
   // 键盘按键按下
   document.onkeydown = ({ keyCode }) => {
-    keyCanOperate && KEY_DOWN_CODE_TYPE.hasOwnProperty(keyCode) && KEY_DOWN_CODE_TYPE[keyCode]
+    keyCanOperate && KEY_DOWN_CODE_TYPE.hasOwnProperty(keyCode) && KEY_DOWN_CODE_TYPE[keyCode].call(this)
   }
   // 键盘按键抬起
   document.onkeyup = ({ keyCode }) => {
-    keyCanOperate && KEY_UP_CODE_TYPE.hasOwnProperty(keyCode) && KEY_UP_CODE_TYPE[keyCode]
+    keyCanOperate && KEY_UP_CODE_TYPE.hasOwnProperty(keyCode) && KEY_UP_CODE_TYPE[keyCode].call(this)
   }
 
   // 页面按钮监听
@@ -116,7 +116,8 @@
   document.querySelector('#code-top').onclick = () => keyCanOperate && KEY_DOWN_ROTATE(1)
   document.querySelector('#code-left').onclick = () => keyCanOperate && KEY_DOWN_MOVE(-1)
   document.querySelector('#code-right').onclick = () => keyCanOperate && KEY_DOWN_MOVE(1)
-  document.querySelector('#code-down').onclick = () => keyCanOperate && KEY_DOWN_SPEED_UP()
+  document.querySelector('#code-down').touchstart = () => keyCanOperate && KEY_DOWN_SPEED_UP()
+  document.querySelector('#code-down').touchend = () => keyCanOperate && KEY_UP_SLOW_DOWN()
 
   // 初始化定时器
   function initInterval(intervalTime) {
@@ -179,8 +180,8 @@
     if (nextCube !== undefined) {
       // 修改样式显示
       for (let i = 0; i < nextCube.x.length; i++) {
-        nextCube.x[i] = nextCube.x[i] - 3
-        nextCube.y[i] = nextCube.y[i] + 3
+        nextCube.x[i] = nextCube.x[i] - 2
+        nextCube.y[i] = nextCube.y[i] + 4
       }
     }
     // 循环行数 同渲染方块运动页面
@@ -203,7 +204,7 @@
           // 渲染实心方块
           strCubes += CUBE_SOLID(_nextCubeWidth, nextCube.className)
         } else {
-          strCubes += CUBE_HOLLOW(_nextCubeWidth)
+          strCubes += CUBE_HOLLOW(_nextCubeWidth, 'cube-hollow-next')
         }
       }
     }
@@ -215,7 +216,7 @@
     for (let i = 0; i < _rows; i++) {
       cubeArray[i] = new Array()
       for (let j = 0; j < _columns; j++) {
-        cubeArray[i][j] = CUBE_HOLLOW(_cubeWidth) // 空心快
+        cubeArray[i][j] = CUBE_HOLLOW(_cubeWidth, 'cube-hollow-gaming') // 空心快
       }
     }
   }
@@ -235,7 +236,7 @@
 
   // 删除指定位置方块 将指定位置方块替换为空心块
   function removeChat(x, y) {
-    cubeArray[y][x] = CUBE_HOLLOW(_cubeWidth)
+    cubeArray[y][x] = CUBE_HOLLOW(_cubeWidth, 'cube-hollow-gaming')
   }
 
   // 获取指定位置方块
@@ -339,7 +340,7 @@
     cubeArray.splice(y, 1)
     const colArr = new Array()
     for (let j = 0; j < _columns; j++) {
-      colArr[j] = CUBE_HOLLOW(_cubeWidth) // 空心快
+      colArr[j] = CUBE_HOLLOW(_cubeWidth, 'cube-hollow-gaming') // 空心快
     }
     // 在前面插入空白方块
     cubeArray.unshift(colArr)
@@ -517,7 +518,7 @@
       }
     }
     cube.center = 1 // 方块的旋转中心
-    cube.className = 'cube-Z'
+    cube.className = 'cube-Z-mirror'
     return cube
   }
 
