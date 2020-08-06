@@ -13,7 +13,7 @@
 
   // 如果视窗高度大于宽度则将内容（NodeIndexBox）扩展到100%
   NodeIndexBox.style = WindowHeight > WindowWidth
-    ? `height: 100%; width: 100%;`
+    ? `height: ${WindowWidth * 1.8}px; width: 100%;`
     : `height: ${WindowHeight}px; width: ${WindowHeight / 1.8}px; margin: 0 auto;`
 
   const _conHeight = NodeCubeBox.clientHeight // 定义绘制区域的高度
