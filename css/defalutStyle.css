@@ -8,15 +8,13 @@ body {
 }
 
 .default-style .cube-box {
-  background: radial-gradient(circle at top, #11436f, #0d2041);
+  /* background: radial-gradient(circle at top, #11436f, #0d2041); */
+  background: #000;
   border: 4px solid #074aa8;
   height: calc(98% - 8px) !important;
   box-sizing: content-box;
 }
 
-.default-style .cube-hollow-gaming {
-  border: 1px solid #5e6a9d;
-}
 
 .default-style .the-next-cube-title {
   color: #fff;
@@ -35,10 +33,10 @@ body {
 }
 
 .default-style .the-next-cube {
-  /* border: 1px solid #051c45; */
-  background: #0c4da6;
+  border: 2px solid #074aa8;
+  background: #000;
   box-sizing: content-box;
-  /* width: calc(100% - 2px)!important; */
+  width: calc(100% - 4px)!important;
 }
 
 .default-style .level {
@@ -65,10 +63,14 @@ body {
 .default-style .level .level-span,
 .default-style .max-fraction,
 .default-style .now-fraction {
-  background: #0c4da6;
+  background: #000;
   text-align: right;
   display: block;
   padding: 0 2px;
+  border: 2px solid #074aa8;
+  border-bottom: 4px solid #074aa8;
+  white-space: pre-wrap;
+    word-break: break-all;
 }
 
 .default-style .game-fraction {
@@ -77,8 +79,13 @@ body {
   color: #fff;
 }
 
+.default-style .cube-hollow-gaming {
+  border: 1px solid #000;
+}
+
 .default-style .cube-solid {
-  border: 1px solid #fff;
+  border: 2px solid #000;
+  border-radius: 4px;
 }
 
 .default-style .cube-I {
