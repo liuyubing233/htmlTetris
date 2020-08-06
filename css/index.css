@@ -60,35 +60,71 @@ body {
   font-weight: bold;
 }
 
+/* 底部按钮位置样式 */
 .game-buttons {
   height: 20%;
   display: flex;
   justify-content: center;
 }
 
-.button-center {
-  height: calc(100% - 24px);
-  margin: 12px;
+.button-right {
+  /* height: calc(100% - 24px); */
+  /* margin: 12px; */
   height: 100%;
   text-align: center;
 }
 
-#button-top,
-#button-left,
-#button-right,
-#button-down,
-#button-space {
-  padding: 0;
-  margin: 0;
-  border: 0;
-  /* background: transparent; */
+.button-right .button-right-center {
+  height: calc(100% / 3);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 
-.button-have-space-div {
-  display: flex;
+.button-right button {
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+}
+
+#code-top,
+#code-down {
+  width: 30%;
+  height: calc(100% / 3);
+}
+
+#code-left,
+#code-right {
+  width: calc(100% / 3);
+  height: 100%;
+}
+
+.button-right .icon {
+  font-size: 24px;
 }
 
 .button-left,
-.button-right {
+.button-center {
   flex: 1;
+}
+
+.button-left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-left #code-space {
+  width: 50%;
+  height: 50%;
+  font-size: 24px;
+}
+
+.button-center {
+  display: flex;
+  justify-content: center;
+}
+
+.button-center #button-start {
+  height: 20%;
 }

@@ -9,7 +9,7 @@
   const NodeFractionNow = document.querySelector('.now-fraction') // 当前得分
   const NodeFractionMax = document.querySelector('.max-fraction') // 最高得分
   const NodeLevel = document.querySelector('.level-span') // 等级
-  const NodeButtonCenter = document.querySelector('.button-center') // 操作按钮盒子
+  const NodeButtonRight = document.querySelector('.button-right')
 
   // 如果视窗高度大于宽度则将内容（NodeIndexBox）扩展到100%
   NodeIndexBox.style = WindowHeight > WindowWidth
@@ -30,6 +30,8 @@
   const _nextRows = 4
   const _nextCubeWidth = _nextWidth / _nextColumns
   /* 下一个方块显示区域 样式获取绘制 end */
+
+  NodeButtonRight.style.width = NodeButtonRight.clientHeight + 'px'
 
   let cubeArray = new Array() // 方块数组
   let moveTime = 600 // 下落速度（moveTime ms 下落一次）
@@ -87,10 +89,6 @@
     return `<div style="width: ${w}px;height: ${w}px;border: 1px solid #000;float: left;background: #000" class="cube-solid ${className || ''}"></div>`
   }
 
-  NodeButtonCenter.onclick = (e) => {
-    console.log(e.target.id)
-  }
-
   // 点击开始按钮
   NodeButtonStart.onclick = () => {
     if (!keyCanOperate) {
@@ -119,6 +117,13 @@
       printCube()
     }
   }
+
+  // 页面按钮监听
+  document.querySelector('#code-space').onclick = () => keyCanOperate && KEY_DOWN_DOWN()
+  document.querySelector('#code-top').onclick = () => keyCanOperate && KEY_DOWN_ROTATE(1)
+  document.querySelector('#code-left').onclick = () => keyCanOperate && KEY_DOWN_MOVE(-1)
+  document.querySelector('#code-right').onclick = () => keyCanOperate && KEY_DOWN_MOVE(1)
+  document.querySelector('#code-down').onclick = () => keyCanOperate && KEY_DOWN_SPEED_UP()
 
   // 初始化定时器
   function initInterval(intervalTime) {
@@ -372,6 +377,7 @@
     NodeButtonStart.disabled = false
     gameOverRestart = true
     window.clearInterval(interval)
+    NodeButtonStart.innerText = 'RESTART'
     const fraction = +NodeFractionNow.innerText
     const fractionMax = localStorage.getItem('maxFraction') || 0
     if (fraction > fractionMax) {

@@ -5,9 +5,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tetris</title>
+  <link rel="stylesheet" href="./css/index.css">
   <style>
-    @import './css/index.css';
+    .icon {
+      width: 1em;
+      height: 1em;
+      vertical-align: -0.15em;
+      fill: currentColor;
+      overflow: hidden;
+    }
   </style>
+  <script src="http://at.alicdn.com/t/font_1989591_44838dc2opa.js"></script>
+
 </head>
 
 <body>
@@ -30,31 +39,43 @@
     </div>
     <div class="game-buttons">
       <div class="button-left">
-        <button id="button-start" type="button">START</button>
+        <button id="code-space">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-xiala"></use>
+          </svg>
+        </button>
       </div>
       <div class="button-center">
-        <button id="button-top">
-          <div></div>
+        <button id="button-start" type="button">START</button>
+      </div>
+      <div class="button-right">
+        <button id="code-top">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-shang"></use>
+          </svg>
         </button>
-        <div class="button-have-space-div">
-          <button id="button-left">
-            <div></div>
+        <div class="button-right-center">
+          <button id="code-left">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-left"></use>
+            </svg>
           </button>
-          <button id="button-space">
-            <div></div>
-          </button>
-          <button id="button-right">
-            <div></div>
+          <button id="code-right">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-you"></use>
+            </svg>
           </button>
         </div>
-        <button id="button-down">
-          <div></div>
+        <button id="code-down">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-xialacopy"></use>
+          </svg>
         </button>
       </div>
-      <div class="button-right"></div>
     </div>
   </div>
   <script src="./js/index.js"></script>
+
 </body>
 
 </html>
