@@ -104,18 +104,11 @@
   }
   // 键盘按键按下
   document.onkeydown = ({ keyCode }) => {
-    if (keyCanOperate && KEY_DOWN_CODE_TYPE.hasOwnProperty(keyCode)) {
-      KEY_DOWN_CODE_TYPE[keyCode].call(this)
-      printCube()
-    }
+    keyCanOperate && KEY_DOWN_CODE_TYPE.hasOwnProperty(keyCode) && KEY_DOWN_CODE_TYPE[keyCode]
   }
-
   // 键盘按键抬起
   document.onkeyup = ({ keyCode }) => {
-    if (keyCanOperate && KEY_UP_CODE_TYPE.hasOwnProperty(keyCode)) {
-      KEY_UP_CODE_TYPE[keyCode].call(this)
-      printCube()
-    }
+    keyCanOperate && KEY_UP_CODE_TYPE.hasOwnProperty(keyCode) && KEY_UP_CODE_TYPE[keyCode]
   }
 
   // 页面按钮监听
@@ -408,6 +401,15 @@
     }
   }
 
+  // 键盘抬起 减速
+  function KEY_UP_SLOW_DOWN() {
+    if (isSpeedUp) {
+      isSpeedUp = false
+      window.clearInterval(interval)
+      initInterval(moveTime)
+    }
+  }
+
   // 键盘操作 方块下到底部
   function KEY_DOWN_DOWN() {
     while (drop()) { }
@@ -444,15 +446,6 @@
         thisCube.x[i] = nY + rX - rY
         thisCube.y[i] = rX + rY - nX
       }
-    }
-  }
-
-  // 键盘抬起 减速
-  function KEY_UP_SLOW_DOWN() {
-    if (isSpeedUp) {
-      isSpeedUp = false
-      window.clearInterval(interval)
-      initInterval(moveTime)
     }
   }
 
