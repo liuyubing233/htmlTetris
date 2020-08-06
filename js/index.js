@@ -10,25 +10,24 @@
   const NodeFractionMax = document.querySelector('.max-fraction') // 最高得分
   const NodeLevel = document.querySelector('.level-span') // 等级
   const NodeButtonRight = document.querySelector('.button-right')
+  const NodeCubeBoxContent = document.querySelector('.cube-box-content') // 游戏运行填入盒子区域
 
-  // 如果视窗高度大于宽度则将内容（NodeIndexBox）扩展到100%
-  NodeIndexBox.style = WindowHeight > WindowWidth
-    ? `height: ${WindowWidth * 1.8}px; width: 100%;`
+  // 如果视窗WindowWidth < WindowHeight / 1.8则将内容（NodeIndexBox）扩展到100%
+  NodeIndexBox.style = WindowWidth < WindowHeight / 1.8
+    ? `height: 100%; width: 100%;`
     : `height: ${WindowHeight}px; width: ${WindowHeight / 1.8}px; margin: 0 auto;`
 
-  const _conHeight = NodeCubeBox.clientHeight // 定义绘制区域的高度
-  const _conWidth = _conHeight / 2 // 定义绘制区域的宽度
+  const _conWidth = NodeCubeBox.clientWidth // 定义绘制区域的宽度
+  const _conHeight = _conWidth * 2 // 定义绘制区域的高度
   const _columns = 10 // 列数
   const _rows = _columns * 2 // 行数
-  const _cubeWidth = _conWidth / _columns // 方块边长
-  NodeCubeBox.style = `width: ${_conWidth}px;` // 定义NodeCubeBox的宽
+  const _cubeWidth = _conWidth / _columns - 1 // 方块边长
 
   /* 下一个方块显示区域 样式获取绘制 start */
   const _nextWidth = NodeNextCubeBox.clientWidth
-  NodeNextCubeBox.style = `height: ${_nextWidth}px`
   const _nextColumns = 6
   const _nextRows = 6
-  const _nextCubeWidth = _nextWidth / _nextColumns
+  const _nextCubeWidth = _nextWidth / _nextColumns - 1
   /* 下一个方块显示区域 样式获取绘制 end */
 
   NodeButtonRight.style.width = NodeButtonRight.clientHeight + 'px'
@@ -81,12 +80,12 @@
 
   // 空心方块
   const CUBE_HOLLOW = (w, className) => {
-    return `<div style="width: ${w}px;height: ${w}px;float: left;" class="cube-hollow ${className || ''}"></div>`
+    return `<div style="width: ${w}px;height: ${w}px;display: inline-block;" class="cube-hollow ${className || ''}"></div>`
   }
 
   // 实心方块
   const CUBE_SOLID = (w, className) => {
-    return `<div style="width: ${w}px;height: ${w}px;float: left;" class="cube-solid ${className || ''}"></div>`
+    return `<div style="width: ${w}px;height: ${w}px;display: inline-block;" class="cube-solid ${className || ''}"></div>`
   }
 
   // 点击开始按钮
@@ -170,8 +169,9 @@
           strCubes += cubeArray[i][j]
         }
       }
+      strCubes += `<br />`
     }
-    NodeCubeBox.innerHTML = strCubes
+    NodeCubeBoxContent.innerHTML = strCubes
   }
 
   // 显示下一个方块
@@ -208,6 +208,7 @@
           strCubes += CUBE_HOLLOW(_nextCubeWidth, 'cube-hollow-next')
         }
       }
+      strCubes += `<br />`
     }
     NodeNextCubeBox.innerHTML = strCubes
   }
