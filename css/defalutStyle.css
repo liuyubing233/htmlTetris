@@ -4,7 +4,7 @@ body {
 }
 
 .default-style {
-  background: #f12e35
+  background: #f64147
 }
 
 .default-style .cube-box .cube-box-content {
@@ -122,4 +122,8 @@ body {
 
 .default-style .iconfont {
   font-size: 18px;
+}
+
+.default-style .cube-display-box .cube-right-box .your-content {
+  flex: 1;
 }
