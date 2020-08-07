@@ -159,10 +159,10 @@
 
   document.querySelector('#code-down').addEventListener('touchstart', (e) => {
     keyCanOperate && KEY_DOWN_SPEED_UP()
-  })
+  }, false)
   document.querySelector('#code-down').addEventListener('touchend', (e) => {
     keyCanOperate && KEY_UP_SLOW_DOWN()
-  })
+  }, false)
 
   // 初始化定时器
   function initInterval(intervalTime) {
