@@ -88,13 +88,39 @@ body {
 .button-right {
   height: 100%;
   text-align: center;
+  font-size: 12px;
+  color: #fff;
 }
 
-.button-right .button-right-center {
+.button-right .button-center-box {
   height: calc(100% / 3);
   width: 100%;
   display: flex;
-  justify-content: space-between;
+}
+
+.button-center-box .center-box-div,
+.button-center-box button {
+  flex: 1;
+  height: 100%;
+}
+
+.center-box-div {
+  overflow: hidden;
+}
+
+.center-box-div span {
+  margin-top: 50%;
+  transform: translateY(-50%);
+}
+
+.center-box-div span:first-of-type {
+  float: left;
+  margin-left: 4px;
+}
+
+.center-box-div span:last-of-type {
+  float: right;
+  margin-right: 4px;
 }
 
 .button-right button {
@@ -103,40 +129,60 @@ body {
   border-radius: 50%;
 }
 
-#code-top,
-#code-down {
-  width: 30%;
+.button-top-box {
+  width: 100%;
   height: calc(100% / 3);
+  display: flex;
 }
 
-#code-left,
-#code-right {
-  width: calc(100% / 3);
+.button-top-box button,
+.button-top-box .top-box-div {
+  flex: 1;
   height: 100%;
 }
 
-.button-right .icon {
-  font-size: 24px;
+.button-top-box .top-box-div {
+  color: #fff;
+}
+
+.button-top-box .top-box-div span {
+  float: left;
+  margin-top: 50%;
+  transform: translateY(-50%);
+  margin-left: 4px;
+}
+
+.button-bottom-box {
+  display: flex;
+  height: calc(100% / 3);
+}
+
+.button-bottom-box button,
+.button-bottom-box .bottom-box-div {
+  flex: 1;
+  height: 100%;
+}
+
+.bottom-box-div span {
+  float: left;
+  margin-top: 50%;
+  transform: translateY(-50%);
+  margin-left: 4px;
 }
 
 .button-left {
   flex: 1;
-}
-
-.button-left {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.button-left #code-space {
-  width: 50%;
-  height: 50%;
-  font-size: 24px;
-}
-
-.button-left #code-space .icon {
-  font-size: 24px;
+.button-left #code-rotate {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 80px;
 }
 
 .button-center {

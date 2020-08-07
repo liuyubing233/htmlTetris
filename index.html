@@ -3,21 +3,10 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
   <title>Tetris</title>
   <link rel="stylesheet" href="./css/index.css">
   <link rel="stylesheet" href="./css/defalutStyle.css">
-  <style>
-    .icon {
-      width: 1em;
-      height: 1em;
-      vertical-align: -0.15em;
-      fill: currentColor;
-      overflow: hidden;
-    }
-  </style>
-  <script src="https://at.alicdn.com/t/font_1989591_44838dc2opa.js"></script>
-
 </head>
 
 <body>
@@ -44,41 +33,35 @@
       </div>
     </div>
     <div class="game-buttons">
-      <div class="button-left">
-        <button id="code-space">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-xiala"></use>
-          </svg>
-        </button>
+      <div class="button-right">
+        <div class="button-top-box">
+          <div class="top-box-div"></div>
+          <button id="code-to-bottom"></button>
+          <div class="top-box-div">
+            <span>下落<br />到底</span>
+          </div>
+        </div>
+        <div class="button-center-box">
+          <button id="code-left"></button>
+          <div class="center-box-div">
+            <span>左</span>
+            <span>右</span>
+          </div>
+          <button id="code-right"></button>
+        </div>
+        <div class="button-bottom-box">
+          <div class="bottom-box-div"></div>
+          <button id="code-speed-up"></button>
+          <div class="bottom-box-div"><span>加速</span></div>
+        </div>
       </div>
       <div class="button-center">
         <button id="button-start" type="button">开始游戏</button>
         <div></div>
         <button id="button-pause" type="button" disabled="true">暂停</button>
       </div>
-      <div class="button-right">
-        <button id="code-top">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-shang"></use>
-          </svg>
-        </button>
-        <div class="button-right-center">
-          <button id="code-left">
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-left"></use>
-            </svg>
-          </button>
-          <button id="code-right">
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-you"></use>
-            </svg>
-          </button>
-        </div>
-        <button id="code-down">
-          <svg class="icon" aria-hidden="true">
-            <use xlink:href="#icon-xialacopy"></use>
-          </svg>
-        </button>
+      <div class="button-left">
+        <button id="code-rotate">旋转</button>
       </div>
     </div>
   </div>

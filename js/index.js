@@ -12,6 +12,7 @@
   const NodeLevel = document.querySelector('.level-span') // 等级
   const NodeButtonRight = document.querySelector('.button-right')
   const NodeCubeBoxContent = document.querySelector('.cube-box-content') // 游戏运行填入盒子区域
+  const NodeGameButtonBox = document.querySelector('.game-buttons') // 游戏按钮盒子
 
   // 如果视窗WindowWidth < WindowHeight / 1.8则将内容（NodeIndexBox）扩展到100%
   NodeIndexBox.style = WindowWidth < WindowHeight / 1.8
@@ -38,6 +39,8 @@
   let isSpeedUp = false // 是否已经加速
   let isSpeedUpTime = 0 // 加速按钮时间,解决一直点按暂停的问题
   let isLiftUpTime = 0 // 加速按钮抬起时间
+  let buttonSpeedUpTime = 0 // 页面按钮点击加速时间
+  let buttonSpeedUPTimeout = undefined
   let thisCube = undefined // 当前实心方块
   let nextCubeType = undefined // 下一个方块种类
   let interval = undefined // 定时
@@ -79,6 +82,17 @@
     80: () => KEY_DOWN_PAUSE(), // 键盘p键 暂停
   }
 
+  // 按钮方式
+  const BUTTON_DOWN_TYPE = {
+    'code-to-bottom': () => KEY_DOWN_DOWN(),
+    'code-rotate': () => KEY_DOWN_ROTATE(1),
+    'code-left': () => KEY_DOWN_MOVE(-1),
+    'code-right': () => KEY_DOWN_MOVE(1),
+    'code-speed-up': () => BUTTON_SPEED_UP(),
+    'button-pause': () => KEY_DOWN_PAUSE(),
+    'button-start': () => GAME_START()
+  }
+
   // 键盘抬起方式
   const KEY_UP_CODE_TYPE = {
     40: () => KEY_UP_SLOW_DOWN(), // 抬起下键 速度变慢
@@ -94,8 +108,8 @@
     return `<div style="width: ${w}px;height: ${w}px;display: inline-block;" class="cube-solid ${className || ''}"></div>`
   }
 
-  // 点击开始按钮
-  NodeButtonStart.onclick = () => {
+  // 游戏开始
+  function GAME_START() {
     if (!keyCanOperate) {
       thisCube = undefined
       gameOverRestart && init()
@@ -109,6 +123,7 @@
       initInterval(600)
     }
   }
+
   // 键盘按键按下
   document.onkeydown = ({ keyCode }) => {
     if (keyCode === 80 && !NodeButtonPause.disabled) {
@@ -123,46 +138,15 @@
   }
 
   // 页面按钮监听
-  document.querySelector('#code-space').onclick = () => {
-    if (keyCanOperate) {
-      KEY_DOWN_DOWN()
-      navigator.vibrate(50) // 震动0.05s
-    }
-  }
-  document.querySelector('#code-top').onclick = () => {
-    if (keyCanOperate) {
-      KEY_DOWN_ROTATE(1)
+  NodeGameButtonBox.onclick = (e) => {
+    const idName = e.target.id || ''
+    if (idName === 'button-pause' || idName === 'button-start') {
+      BUTTON_DOWN_TYPE[idName].call(this)
+    } else if (keyCanOperate) {
+      BUTTON_DOWN_TYPE.hasOwnProperty(idName) && BUTTON_DOWN_TYPE[idName].call(this)
       navigator.vibrate(50)
     }
   }
-  document.querySelector('#code-left').onclick = () => {
-    if (keyCanOperate) {
-      KEY_DOWN_MOVE(-1)
-      navigator.vibrate(50)
-    }
-  }
-  document.querySelector('#code-right').onclick = () => {
-    if (keyCanOperate) {
-      KEY_DOWN_MOVE(1)
-      navigator.vibrate(50)
-    }
-  }
-  NodeButtonPause.onclick = () => {
-    KEY_DOWN_PAUSE()
-    navigator.vibrate(50)
-  }
-
-  // 关闭浏览器长按事件
-  document.addEventListener('touchstart', (e) => {
-    e.preventDefault()
-  }, false)
-
-  document.querySelector('#code-down').addEventListener('touchstart', (e) => {
-    keyCanOperate && KEY_DOWN_SPEED_UP()
-  }, false)
-  document.querySelector('#code-down').addEventListener('touchend', (e) => {
-    keyCanOperate && KEY_UP_SLOW_DOWN()
-  }, false)
 
   // 初始化定时器
   function initInterval(intervalTime) {
@@ -456,6 +440,22 @@
       NodeButtonPause.innerText = '继续'
       isPauseMoveTime = moveTime
       window.clearInterval(interval)
+    }
+  }
+
+  // buttonSpeedUpTime
+  // 按钮操作 点击加速
+  function BUTTON_SPEED_UP() {
+    const nowTime = +new Date()
+    if (nowTime > buttonSpeedUpTime + 200) {
+      window.clearInterval(interval)
+      initInterval(moveTime >= 100 ? 100 : moveTime / 2)
+      buttonSpeedUPTimeout && clearTimeout(buttonSpeedUPTimeout)
+      buttonSpeedUPTimeout = setTimeout(() => {
+        window.clearTimeout(buttonSpeedUPTimeout)
+        window.clearInterval(interval)
+        initInterval(moveTime)
+      }, 200)
     }
   }
 
