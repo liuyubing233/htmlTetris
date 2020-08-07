@@ -111,7 +111,11 @@
   }
   // 键盘按键按下
   document.onkeydown = ({ keyCode }) => {
-    keyCanOperate && KEY_DOWN_CODE_TYPE.hasOwnProperty(keyCode) && KEY_DOWN_CODE_TYPE[keyCode].call(this)
+    if (keyCode === 80 && !NodeButtonPause.disabled) {
+      KEY_DOWN_CODE_TYPE[keyCode].call(this)
+    } else {
+      keyCanOperate && KEY_DOWN_CODE_TYPE.hasOwnProperty(keyCode) && KEY_DOWN_CODE_TYPE[keyCode].call(this)
+    }
   }
   // 键盘按键抬起
   document.onkeyup = ({ keyCode }) => {
@@ -120,24 +124,37 @@
 
   // 页面按钮监听
   document.querySelector('#code-space').onclick = () => {
-    keyCanOperate && KEY_DOWN_DOWN()
-    keyCanOperate && navigator.vibrate(100) // 震动0.1s
+    if (keyCanOperate) {
+      KEY_DOWN_DOWN()
+      navigator.vibrate(50) // 震动0.05s
+      AudioServicesPlaySystemSound(1519)
+    }
   }
   document.querySelector('#code-top').onclick = () => {
-    keyCanOperate && KEY_DOWN_ROTATE(1)
-    keyCanOperate && navigator.vibrate(100)
+    if (keyCanOperate) {
+      KEY_DOWN_ROTATE(1)
+      navigator.vibrate(50)
+      AudioServicesPlaySystemSound(1519)
+    }
   }
   document.querySelector('#code-left').onclick = () => {
-    keyCanOperate && KEY_DOWN_MOVE(-1)
-    keyCanOperate && navigator.vibrate(100)
+    if (keyCanOperate) {
+      KEY_DOWN_MOVE(-1)
+      navigator.vibrate(50)
+      AudioServicesPlaySystemSound(1519)
+    }
   }
   document.querySelector('#code-right').onclick = () => {
-    keyCanOperate && KEY_DOWN_MOVE(1)
-    keyCanOperate && navigator.vibrate(100)
+    if (keyCanOperate) {
+      KEY_DOWN_MOVE(1)
+      navigator.vibrate(50)
+      AudioServicesPlaySystemSound(1519)
+    }
   }
   NodeButtonPause.onclick = () => {
-    keyCanOperate && KEY_DOWN_PAUSE()
-    keyCanOperate && navigator.vibrate(100)
+    KEY_DOWN_PAUSE()
+    navigator.vibrate(50)
+    AudioServicesPlaySystemSound(1519)
   }
 
   // 关闭浏览器长按事件
@@ -434,11 +451,13 @@
   function KEY_DOWN_PAUSE() {
     if (isPause) {
       isPause = false
+      keyCanOperate = true
       NodeButtonPause.innerText = '暂停'
       moveTime = isPauseMoveTime
       initInterval(isPauseMoveTime)
     } else {
       isPause = true
+      keyCanOperate = false
       NodeButtonPause.innerText = '继续'
       isPauseMoveTime = moveTime
       window.clearInterval(interval)

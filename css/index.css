@@ -138,6 +138,10 @@ body {
   font-size: 24px;
 }
 
+.button-left #code-space .icon {
+  font-size: 24px;
+}
+
 .button-center {
   position: relative;
 }
