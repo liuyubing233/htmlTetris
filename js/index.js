@@ -167,6 +167,7 @@
 
   // 初始化下6个方块种类列表
   function initNextCubeArray() {
+    nextCubeTypeArray = []
     for (let i = 0; i <= 5; i++) {
       nextCubeTypeArray.push(getNextCubeTypeToArray(i && nextCubeTypeArray[i - 1]))
     }

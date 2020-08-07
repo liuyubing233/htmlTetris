@@ -52,6 +52,7 @@ body {
 .default-style .game-over-cubes {
   border: 0 !important;
   border-radius: 0 !important;
+  background: #fff;
 }
 
 .default-style .cube-hollow-gaming {
@@ -100,7 +101,14 @@ body {
 /* 底部按钮样式 */
 .default-style button {
   /* background: #fff; */
-  background: linear-gradient(to right, #8e9eab, #eef2f3);
+  /* background: linear-gradient(to right, #8e9eab, #eef2f3); */
+  background: #000;
+  color: rgba(255, 255, 255, 0.45);
+  border: 0;
+}
+
+.default-style button:active {
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .default-style .button-center button {
@@ -122,6 +130,7 @@ body {
 
 .default-style .iconfont {
   font-size: 18px;
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .default-style .cube-display-box .cube-right-box .your-content {
