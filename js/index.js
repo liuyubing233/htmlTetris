@@ -127,34 +127,29 @@
     if (keyCanOperate) {
       KEY_DOWN_DOWN()
       navigator.vibrate(50) // 震动0.05s
-      AudioServicesPlaySystemSound(1519)
     }
   }
   document.querySelector('#code-top').onclick = () => {
     if (keyCanOperate) {
       KEY_DOWN_ROTATE(1)
       navigator.vibrate(50)
-      AudioServicesPlaySystemSound(1519)
     }
   }
   document.querySelector('#code-left').onclick = () => {
     if (keyCanOperate) {
       KEY_DOWN_MOVE(-1)
       navigator.vibrate(50)
-      AudioServicesPlaySystemSound(1519)
     }
   }
   document.querySelector('#code-right').onclick = () => {
     if (keyCanOperate) {
       KEY_DOWN_MOVE(1)
       navigator.vibrate(50)
-      AudioServicesPlaySystemSound(1519)
     }
   }
   NodeButtonPause.onclick = () => {
     KEY_DOWN_PAUSE()
     navigator.vibrate(50)
-    AudioServicesPlaySystemSound(1519)
   }
 
   // 关闭浏览器长按事件

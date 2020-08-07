@@ -86,8 +86,6 @@ body {
 }
 
 .button-right {
-  /* height: calc(100% - 24px); */
-  /* margin: 12px; */
   height: 100%;
   text-align: center;
 }
@@ -121,8 +119,7 @@ body {
   font-size: 24px;
 }
 
-.button-left,
-.button-center {
+.button-left {
   flex: 1;
 }
 
@@ -143,20 +140,6 @@ body {
 }
 
 .button-center {
-  position: relative;
-}
-
-.button-center button {
-  display: block;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.button-center #button-start {
-  top: 0;
-}
-
-.button-center #button-pause {
-  top: 30px;
+  padding: 0 24px;
+  text-align: center;
 }
