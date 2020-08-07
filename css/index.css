@@ -65,14 +65,14 @@ body {
 
 .index-box .cube-display-box .cube-right-box .your-content {
   flex: 1;
-  position: relative;
+  /* position: relative; */
 }
 
 .your-content-position {
-  position: absolute;
+  /* position: absolute;
   left: 0;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%); */
 }
 
 .your {
