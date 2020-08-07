@@ -169,10 +169,10 @@ body {
 }
 
 .button-left {
-  flex: 1;
+  height: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
+  padding-right: 12px;
 }
 
 .button-left #code-rotate {
@@ -186,4 +186,5 @@ body {
 .button-center {
   padding: 0 24px;
   text-align: center;
+  flex: 1;
 }

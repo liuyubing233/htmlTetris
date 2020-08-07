@@ -45,6 +45,7 @@
   let nextCubeTypeArray = [] // 下一个方块种类array length = 6
   let interval = undefined // 定时
   let keyCanOperate = false // 键盘是否可以操作
+  let gameStart = false // 游戏是否开始
   let gameOverRestart = false // 是否是游戏结束重新开始
   let level = 1 // 游戏等级
   let isPause = false // 是否暂停
@@ -111,6 +112,7 @@
   // 游戏开始
   function GAME_START() {
     if (!keyCanOperate) {
+      gameStart = true
       thisCube = undefined
       gameOverRestart && init()
       keyCanOperate = true
@@ -408,12 +410,12 @@
   function gameOver() {
     keyCanOperate = false
     gameOverRestart = true
+    gameStart = false
     window.clearInterval(interval)
     thisCube = GAME_OVER_CUBES()
     printCube()
     NodeButtonPause.disabled = true
     NodeButtonStart.disabled = false
-    NodeButtonStart.innerText = 'RESTART'
     const score = +NodeScoreNow.innerText
     const fractionMax = localStorage.getItem('maxScore') || 0
     if (score > fractionMax) {
@@ -437,18 +439,20 @@
 
   // 键盘操作 暂停 继续
   function KEY_DOWN_PAUSE() {
-    if (isPause) {
-      isPause = false
-      keyCanOperate = true
-      NodeButtonPause.innerText = '暂 停'
-      moveTime = isPauseMoveTime
-      initInterval(isPauseMoveTime)
-    } else {
-      isPause = true
-      keyCanOperate = false
-      NodeButtonPause.innerText = '继 续'
-      isPauseMoveTime = moveTime
-      window.clearInterval(interval)
+    if (gameStart) {
+      if (isPause) {
+        isPause = false
+        keyCanOperate = true
+        NodeButtonPause.innerHTML = `<i class="iconfont icon-zanting"></i>`
+        moveTime = isPauseMoveTime
+        initInterval(isPauseMoveTime)
+      } else {
+        isPause = true
+        keyCanOperate = false
+        NodeButtonPause.innerHTML = `<i class="iconfont icon-jixutianjia"></i>`
+        isPauseMoveTime = moveTime
+        window.clearInterval(interval)
+      }
     }
   }
 
