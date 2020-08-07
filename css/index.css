@@ -139,9 +139,20 @@ body {
 }
 
 .button-center {
-  text-align: center;
+  position: relative;
+}
+
+.button-center button {
+  display: block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .button-center #button-start {
-  height: 20%;
+  top: 0;
+}
+
+.button-center #button-pause {
+  top: 30px;
 }
