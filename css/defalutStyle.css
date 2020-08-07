@@ -127,3 +127,28 @@ body {
   white-space: pre-wrap;
   word-break: break-all;
 }
+
+/* 底部按钮样式 */
+.default-style .button-right button {
+  background: #fff;
+}
+
+.default-style #code-space {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+.default-style #button-start {
+  height: 30px;
+  background: #fff;
+  font-weight: bold;
+}
+
+.default-style #button-pause {
+  height: 30px;
+  background: #fff;
+  font-weight: bold;
+  margin-top: 5px;
+}

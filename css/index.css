@@ -139,8 +139,7 @@ body {
 }
 
 .button-center {
-  display: flex;
-  justify-content: center;
+  text-align: center;
 }
 
 .button-center #button-start {
