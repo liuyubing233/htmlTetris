@@ -1,58 +1,61 @@
 /* 默认颜色样式 .default-style  */
 body {
-  background: radial-gradient(#fff, #051c45);
+  background: radial-gradient(#ffedbc, #ed4264);
 }
 
 .default-style {
-  background: radial-gradient(#115ea1, #0a274f);
+  background: #f12e35
 }
 
-/* .default-style .cube-box {
-  box-sizing: content-box;
-} */
-
 .default-style .cube-box .cube-box-content {
-  border: 4px solid #074aa8;
   background: #000;
 }
 
-.default-style .the-next-cube-title {
-  color: #fff;
-  font-size: 18px;
+.default-style .the-next-cube-title,
+.default-style .your-title {
+  font-size: 12px;
   font-weight: bold;
   text-align: center;
-  background-image: linear-gradient(
-    #0754ad,
-    #114e91,
-    #094a91,
-    #094a91,
-    #094a91,
-    #114e91,
-    #0754ad
-  );
+  padding-bottom: 4px;
+  color: #000;
+}
+
+.default-style .your-title {
+  padding-top: 12px;
 }
 
 .default-style .the-next-cube {
-  border: 2px solid #074aa8;
   background: #000;
   box-sizing: content-box;
-  width: calc(100% - 4px) !important;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  width: 100% !important;
 }
 
-.default-style .game-fraction {
-  padding: 0 !important;
-  border: 0 !important;
+.default-style .your-content {
+  background: #000;
   color: #fff;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding: 2px;
+}
+
+.default-style .your-content-position {
+  text-align: center;
+}
+
+.default-style .your-content-box {
+  font-weight: bold;
+  padding-bottom: 6px;
 }
 
 .default-style .game-over-cubes {
   border: 0 !important;
   border-radius: 0 !important;
-  background: #fff;
 }
 
 .default-style .cube-hollow-gaming {
-  border: 1px solid #000;
+  border: 1px solid #0a0809;
   background: #000;
 }
 
@@ -94,61 +97,29 @@ body {
   background: #6266fe;
 }
 
-.default-style .level {
-  color: #fff;
-  border: 0;
-  padding: 0;
-}
-
-.default-style .level .level-title,
-.default-style .fraction-box {
-  display: block;
-  padding: 0 2px;
-  background-image: linear-gradient(
-    #0754ad,
-    #114e91,
-    #094a91,
-    #094a91,
-    #094a91,
-    #114e91,
-    #0754ad
-  );
-}
-
-.default-style .level .level-span,
-.default-style .max-fraction,
-.default-style .now-fraction {
-  background: #000;
-  text-align: right;
-  display: block;
-  padding: 0 2px;
-  border: 2px solid #074aa8;
-  border-bottom: 4px solid #074aa8;
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
 /* 底部按钮样式 */
-.default-style .button-right button {
-  background: #fff;
+.default-style button {
+  /* background: #fff; */
+  background: linear-gradient(to right, #8e9eab, #eef2f3);
+}
+
+.default-style .button-center button {
+  border-radius: 5px;
+  height: 30px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .default-style #code-rotate {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
 }
 
-.default-style #button-start {
-  height: 30px;
-  background: #fff;
-  font-weight: bold;
+.default-style .button-right {
+  color: #000;
 }
 
-.default-style #button-pause {
-  height: 30px;
-  background: #fff;
-  font-weight: bold;
-  margin-top: 5px;
+.default-style .iconfont {
+  font-size: 18px;
 }

@@ -7,6 +7,7 @@
   <title>Tetris</title>
   <link rel="stylesheet" href="./css/index.css">
   <link rel="stylesheet" href="./css/defalutStyle.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_1989591_7fjlidbbfb.css">
 </head>
 
 <body>
@@ -17,18 +18,21 @@
       </div>
       <div class="cube-right-box">
         <div class="the-next">
-          <div class="the-next-cube-title">NEXT</div>
+          <div class="the-next-cube-title">N E X T</div>
           <div class="the-next-cube"></div>
         </div>
-        <div class="level">
-          <span class="level-title">level:</span>
-          <span class="level-span">1</span>
-        </div>
-        <div class="game-fraction">
-          <div class="fraction-box">最高得分</div>
-          <div class="max-fraction fraction-box">0</div>
-          <div class="fraction-box">当前得分</div>
-          <div class="now-fraction fraction-box">0</div>
+        <div class="your">
+          <div class="your-title">Y O U R</div>
+          <div class="your-content">
+            <div class="your-content-position">
+              <div class="level-title">level</div>
+              <div class="level-span your-content-box">1</div>
+              <div class="score-box">highest</div>
+              <div class="max-score score-box your-content-box">0</div>
+              <div class="score-box">current</div>
+              <div class="now-score score-box your-content-box">0</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -36,32 +40,29 @@
       <div class="button-right">
         <div class="button-top-box">
           <div class="top-box-div"></div>
-          <button id="code-to-bottom"></button>
-          <div class="top-box-div">
-            <span>下落<br />到底</span>
-          </div>
+          <button id="code-to-bottom" class="codeToBottom">
+            <i class="iconfont icon-download-img codeToBottom"></i>
+          </button>
+          <div class="top-box-div"></div>
         </div>
         <div class="button-center-box">
-          <button id="code-left"></button>
-          <div class="center-box-div">
-            <span>左</span>
-            <span>右</span>
-          </div>
-          <button id="code-right"></button>
+          <button id="code-left"><i class="iconfont icon-xiangyou-copy"></i></button>
+          <div class="center-box-div"></div>
+          <button id="code-right"><i class="iconfont icon-xiangyou"></i></button>
         </div>
         <div class="button-bottom-box">
           <div class="bottom-box-div"></div>
-          <button id="code-speed-up"></button>
-          <div class="bottom-box-div"><span>加速</span></div>
+          <button id="code-speed-up"><i class="iconfont icon-xiangxia1"></i></button>
+          <div class="bottom-box-div"></div>
         </div>
       </div>
       <div class="button-center">
-        <button id="button-start" type="button">开始游戏</button>
+        <button id="button-start" type="button">START</button>
         <div></div>
-        <button id="button-pause" type="button" disabled="true">暂停</button>
+        <button id="button-pause" type="button" disabled="true">暂 停</button>
       </div>
       <div class="button-left">
-        <button id="code-rotate">旋转</button>
+        <button id="code-rotate"><i class="iconfont icon-xuanzhuan2"></i></button>
       </div>
     </div>
   </div>

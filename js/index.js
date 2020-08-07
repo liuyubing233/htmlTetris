@@ -7,8 +7,8 @@
   const NodeNextCubeBox = document.querySelector('.the-next-cube') // 下一个方块的显示盒子
   const NodeButtonStart = document.querySelector('#button-start') // 开始按钮
   const NodeButtonPause = document.querySelector('#button-pause') // 暂停继续按钮
-  const NodeFractionNow = document.querySelector('.now-fraction') // 当前得分
-  const NodeFractionMax = document.querySelector('.max-fraction') // 最高得分
+  const NodeScoreNow = document.querySelector('.now-score') // 当前得分
+  const NodeScoreMax = document.querySelector('.max-score') // 最高得分
   const NodeLevel = document.querySelector('.level-span') // 等级
   const NodeButtonRight = document.querySelector('.button-right')
   const NodeCubeBoxContent = document.querySelector('.cube-box-content') // 游戏运行填入盒子区域
@@ -28,7 +28,7 @@
   /* 下一个方块显示区域 样式获取绘制 start */
   const _nextWidth = NodeNextCubeBox.clientWidth
   const _nextColumns = 6
-  const _nextRows = 6
+  const _nextRows = 3
   const _nextCubeWidth = _nextWidth / _nextColumns - 1
   /* 下一个方块显示区域 样式获取绘制 end */
 
@@ -42,7 +42,7 @@
   let buttonSpeedUpTime = 0 // 页面按钮点击加速时间
   let buttonSpeedUPTimeout = undefined
   let thisCube = undefined // 当前实心方块
-  let nextCubeType = undefined // 下一个方块种类
+  let nextCubeTypeArray = [] // 下一个方块种类array length = 6
   let interval = undefined // 定时
   let keyCanOperate = false // 键盘是否可以操作
   let gameOverRestart = false // 是否是游戏结束重新开始
@@ -139,7 +139,7 @@
 
   // 页面按钮监听
   NodeGameButtonBox.onclick = (e) => {
-    const idName = e.target.id || ''
+    const idName = e.target.id || e.target.parentNode.id
     if (idName === 'button-pause' || idName === 'button-start') {
       BUTTON_DOWN_TYPE[idName].call(this)
     } else if (keyCanOperate) {
@@ -158,17 +158,30 @@
   // 初始化
   function init() {
     initCubeArray()
-    getNextCubeType()
+    initNextCubeArray()
+    getMaxScore()
     printCube()
-    getMaxFraction()
     printNextCube()
   }
   init()
 
+  // 初始化下6个方块种类列表
+  function initNextCubeArray() {
+    for (let i = 0; i <= 5; i++) {
+      nextCubeTypeArray.push(getNextCubeTypeToArray(i && nextCubeTypeArray[i - 1]))
+    }
+  }
+
+  // 随机获取下一次方块种类
+  function getNextCubeTypeToArray(type = -1) {
+    const randomType = Math.round(Math.random() * 6)
+    return type !== randomType ? randomType : getNextCubeTypeToArray(type)
+  }
+
   // 获取最大得分
-  function getMaxFraction() {
-    const fraction = localStorage.getItem('maxFraction') || 0
-    NodeFractionMax.innerText = fraction
+  function getMaxScore() {
+    const score = localStorage.getItem('maxScore') || 0
+    NodeScoreMax.innerText = score
   }
 
   // 方块绘制
@@ -206,38 +219,42 @@
   // 显示下一个方块
   function printNextCube() {
     let strCubes = ''
-    const nextCube = nextCubeType !== undefined ? getCubeByType(nextCubeType) : undefined
-    if (nextCube !== undefined) {
+    const nextCubeArray = new Array()
+    nextCubeTypeArray.forEach((i) => nextCubeArray.push(getCubeByType(i)))
+    nextCubeArray.forEach((nextCube) => {
       // 修改样式显示
       for (let i = 0; i < nextCube.x.length; i++) {
         nextCube.x[i] = nextCube.x[i] - 2
-        nextCube.y[i] = nextCube.y[i] + 4
+        nextCube.y[i] = nextCube.y[i] + 3
       }
-    }
-    // 循环行数 同渲染方块运动页面
-    for (let i = 0; i < _nextRows; i++) {
-      // 循环每行几列
-      for (let j = 0; j < _nextColumns; j++) {
-        let k = 0
-        if (nextCube !== undefined) {
-          for (k = 0; k < nextCube.x.length; k++) {
-            // 如果当前行等于生成方块的y
-            // 如果当前列等于生成方块的x
-            if (i === nextCube.y[k] && j === nextCube.x[k]) {
-              // 跳出循环
-              break
+      // 循环行数 同渲染方块运动页面
+      for (let i = 0; i < _nextRows; i++) {
+        // 循环每行几列
+        for (let j = 0; j < _nextColumns; j++) {
+          let k = 0
+          if (nextCube !== undefined) {
+            for (k = 0; k < nextCube.x.length; k++) {
+              // 如果当前行等于生成方块的y
+              // 如果当前列等于生成方块的x
+              if (i === nextCube.y[k] && j === nextCube.x[k]) {
+                // 跳出循环
+                break
+              }
             }
           }
+          // 如果循环的k不等于x的长度
+          if (nextCube !== undefined && k !== nextCube.x.length) {
+            // 渲染实心方块
+            strCubes += CUBE_SOLID(_nextCubeWidth, nextCube.className)
+          } else {
+            strCubes += CUBE_HOLLOW(_nextCubeWidth, 'cube-hollow-next')
+          }
         }
-        // 如果循环的k不等于x的长度
-        if (nextCube !== undefined && k !== nextCube.x.length) {
-          // 渲染实心方块
-          strCubes += CUBE_SOLID(_nextCubeWidth, nextCube.className)
-        } else {
-          strCubes += CUBE_HOLLOW(_nextCubeWidth, 'cube-hollow-next')
-        }
+        strCubes += `<br />`
       }
-      strCubes += `<br />`
+    })
+    for (let j = 0; j < _nextColumns; j++) {
+      strCubes += CUBE_HOLLOW(_nextCubeWidth, 'cube-hollow-next')
     }
     NodeNextCubeBox.innerHTML = strCubes
   }
@@ -346,17 +363,17 @@
     // 如果消除了行则开始积分
     // 积分规则为 行数*100*行数
     if (removeLineNum) {
-      const fraction = 100 * removeLineNum * removeLineNum
-      const nowFraction = +NodeFractionNow.innerText
-      NodeFractionNow.innerText = nowFraction + fraction
-      updateLevel(nowFraction + fraction)
+      const score = 100 * removeLineNum * removeLineNum
+      const nowScore = +NodeScoreNow.innerText
+      NodeScoreNow.innerText = nowScore + score
+      updateLevel(nowScore + score)
     }
   }
 
   // 提升难度
-  function updateLevel(fraction) {
+  function updateLevel(score) {
     const levelObj = LEVEL_ARRAY[level]
-    if (fraction >= levelObj.min && fraction < levelObj.max && level !== levelObj.level && moveTime !== levelObj.moveTime) {
+    if (score >= levelObj.min && score < levelObj.max && level !== levelObj.level && moveTime !== levelObj.moveTime) {
       moveTime = levelObj.moveTime
       level = levelObj.level
       NodeLevel.innerText = levelObj.level
@@ -379,20 +396,11 @@
 
   // 产生方块
   function produceCube() {
-    thisCube = getCubeByType(nextCubeType)
-    getNextCubeType()
+    thisCube = getCubeByType(nextCubeTypeArray[0])
+    // 下一个方块列表
+    nextCubeTypeArray.shift()
+    nextCubeTypeArray.push(getNextCubeTypeToArray(nextCubeTypeArray[nextCubeTypeArray.length - 1]))
     printNextCube()
-  }
-
-  // 随机获取下一次方块种类
-  function getNextCubeType() {
-    const randomType = Math.round(Math.random() * 6)
-    if (nextCubeType !== randomType) {
-      nextCubeType = randomType
-    } else {
-      getNextCubeType()
-      return
-    }
   }
 
   // 游戏结束
@@ -404,12 +412,12 @@
     printCube()
     NodeButtonPause.disabled = true
     NodeButtonStart.disabled = false
-    NodeButtonStart.innerText = '重新开始'
-    const fraction = +NodeFractionNow.innerText
-    const fractionMax = localStorage.getItem('maxFraction') || 0
-    if (fraction > fractionMax) {
-      localStorage.setItem('maxFraction', fraction)
-      NodeFractionMax.innerText = fraction
+    NodeButtonStart.innerText = 'RESTART'
+    const score = +NodeScoreNow.innerText
+    const fractionMax = localStorage.getItem('maxScore') || 0
+    if (score > fractionMax) {
+      localStorage.setItem('maxScore', score)
+      NodeScoreMax.innerText = score
     }
   }
 
@@ -431,13 +439,13 @@
     if (isPause) {
       isPause = false
       keyCanOperate = true
-      NodeButtonPause.innerText = '暂停'
+      NodeButtonPause.innerText = '暂 停'
       moveTime = isPauseMoveTime
       initInterval(isPauseMoveTime)
     } else {
       isPause = true
       keyCanOperate = false
-      NodeButtonPause.innerText = '继续'
+      NodeButtonPause.innerText = '继 续'
       isPauseMoveTime = moveTime
       window.clearInterval(interval)
     }

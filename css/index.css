@@ -22,6 +22,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   padding: 12px;
+  border-radius: 20px;
 }
 
 .index-box .cube-display-box {
@@ -46,8 +47,7 @@ body {
 }
 
 .index-box .cube-display-box .cube-right-box {
-  height: 98%;
-  padding-left: 12px;
+  height: 100%;
   width: 25%;
   display: flex;
   flex-direction: column;
@@ -58,23 +58,25 @@ body {
   width: 100%;
 }
 
-.index-box .cube-display-box .cube-right-box .game-fraction {
-  border: 1px solid #000;
-  padding: 2px;
+.index-box .cube-display-box .cube-right-box .your {
+  display: flex;
+  flex-direction: column;
 }
 
-.level {
-  padding: 2px;
+.index-box .cube-display-box .cube-right-box .your-content {
+  flex: 1;
+  position: relative;
 }
 
-.game-fraction .fraction-box {
-  line-height: 24px;
+.your-content-position {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
-.game-fraction .max-fraction,
-.game-fraction .now-fraction {
-  text-align: right;
-  font-weight: bold;
+.your {
+  flex: 1;
 }
 
 .cube-hollow,
@@ -94,7 +96,6 @@ body {
   height: 100%;
   text-align: center;
   font-size: 12px;
-  color: #fff;
 }
 
 .button-right .button-center-box {
@@ -144,10 +145,6 @@ body {
 .button-top-box .top-box-div {
   flex: 1;
   height: 100%;
-}
-
-.button-top-box .top-box-div {
-  color: #fff;
 }
 
 .button-top-box .top-box-div span {
