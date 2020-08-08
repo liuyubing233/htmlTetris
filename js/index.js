@@ -49,7 +49,6 @@
   let gameOverRestart = false // 是否是游戏结束重新开始
   let level = 1 // 游戏等级
   let isPause = false // 是否暂停
-  let isPauseMoveTime = 600 // 暂停时的下落速度
 
   // 游戏等级
   const LEVEL_ARRAY = [
@@ -111,7 +110,7 @@
 
   // 游戏开始
   function GAME_START() {
-    if (!keyCanOperate) {
+    if (!gameStart) {
       gameStart = true
       thisCube = undefined
       gameOverRestart && init()
@@ -410,12 +409,13 @@
   function gameOver() {
     keyCanOperate = false
     gameOverRestart = true
-    gameStart = false
-    window.clearInterval(interval)
     thisCube = GAME_OVER_CUBES()
-    printCube()
     NodeButtonPause.disabled = true
     NodeButtonStart.disabled = false
+    gameStart = false
+    isPause = false // 是否暂停
+    window.clearInterval(interval)
+    printCube()
     const score = +NodeScoreNow.innerText
     const fractionMax = localStorage.getItem('maxScore') || 0
     if (score > fractionMax) {
@@ -444,13 +444,11 @@
         isPause = false
         keyCanOperate = true
         NodeButtonPause.innerHTML = `<i class="iconfont icon-zanting"></i>`
-        moveTime = isPauseMoveTime
-        initInterval(isPauseMoveTime)
+        initInterval(moveTime)
       } else {
         isPause = true
         keyCanOperate = false
         NodeButtonPause.innerHTML = `<i class="iconfont icon-jixutianjia"></i>`
-        isPauseMoveTime = moveTime
         window.clearInterval(interval)
       }
     }
