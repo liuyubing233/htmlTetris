@@ -120,6 +120,7 @@
       moveTime = 600
       level = 1
       NodeLevel.innerText = 1
+      NodeScoreNow.innerText = 0
       produceCube()
       initInterval(600)
     }
